@@ -70,7 +70,7 @@ public class Economy {
         CurrencyFormatEvent event = new CurrencyFormatEvent(amount);
         ChestShop.callEvent(event);
 
-        return event.getFormattedAmount();
+        return String.valueOf(event.getAmount().intValue());
     }
 
     /**

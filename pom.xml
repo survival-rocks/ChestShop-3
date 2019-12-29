@@ -49,6 +49,14 @@
 
     <dependencies>
         <dependency>
+            <groupId>me.justeli</groupId>
+            <artifactId>Portandum</artifactId>
+            <version>3</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/../../plugins/Portandum.jar</systemPath>
+        </dependency>
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>

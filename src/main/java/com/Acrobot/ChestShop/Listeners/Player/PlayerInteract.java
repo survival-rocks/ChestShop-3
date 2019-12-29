@@ -1,6 +1,7 @@
 package com.Acrobot.ChestShop.Listeners.Player;
 
 import com.Acrobot.Breeze.Utils.*;
+import com.Acrobot.ChestShop.ChestShop;
 import com.Acrobot.ChestShop.Commands.AccessToggle;
 import com.Acrobot.ChestShop.Configuration.Messages;
 import com.Acrobot.ChestShop.Configuration.Properties;
@@ -15,6 +16,9 @@ import com.Acrobot.ChestShop.Permission;
 import com.Acrobot.ChestShop.Security;
 import com.Acrobot.ChestShop.Signs.ChestShopSign;
 import com.Acrobot.ChestShop.Utils.uBlock;
+import me.justeli.api.Jsonify;
+import me.justeli.hoveritem.HoverItem;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -30,11 +34,14 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.UUID;
 import java.util.logging.Level;
 
 import static com.Acrobot.Breeze.Utils.BlockUtil.isSign;
@@ -52,7 +59,7 @@ import static org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK;
  */
 public class PlayerInteract implements Listener {
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW)
     public static void onInteract(PlayerInteractEvent event) {
         Block block = event.getClickedBlock();
         if (block == null)
@@ -67,8 +74,8 @@ public class PlayerInteract implements Listener {
             }
 
             if (!Security.canAccess(player, block)) {
-                player.sendMessage(Messages.prefix(Messages.ACCESS_DENIED));
                 event.setCancelled(true);
+                tellWhatItem(block, player);
             }
 
             return;
@@ -145,6 +152,35 @@ public class PlayerInteract implements Listener {
 
         TransactionEvent tEvent = new TransactionEvent(pEvent, sign);
         Bukkit.getPluginManager().callEvent(tEvent);
+    }
+
+    private static final HashMap<UUID, Block> clickedCache = new HashMap<>();
+
+    private static void tellWhatItem (Block chest, Player player)
+    {
+        if (clickedCache.containsKey(player.getUniqueId()) && clickedCache.get(player.getUniqueId()).equals(chest))
+            return;
+
+        Sign sign = uBlock.getConnectedSign(chest);
+
+        if (!sign.getLine(2).toLowerCase().contains("b"))
+            return;
+
+        String line = sign.getLine(3);
+
+        ItemParseEvent parseEvent = new ItemParseEvent(line);
+        Bukkit.getPluginManager().callEvent(parseEvent);
+        ItemStack item = parseEvent.getItem();
+
+        Inventory inventory = ((InventoryHolder)chest.getState()).getInventory();
+        int amount = InventoryUtil.getAmount(item, inventory);
+
+        player.sendMessage("     - " + ChatColor.DARK_AQUA + "Shop of " + sign.getLine(0) + ChatColor.WHITE + " -");
+
+        new Jsonify(" &eShop item &7&o(hover)&e: &r").combine(HoverItem.hoverItem(item)).chat(player);
+        player.sendMessage(ChatColor.YELLOW + " Amount in stock: " + ChatColor.WHITE + amount);
+        player.sendMessage(ChatColor.GRAY + " Right-click the sign to buy.");
+        clickedCache.put(player.getUniqueId(), chest);
     }
 
     private static PreTransactionEvent preparePreTransactionEvent(Sign sign, Player player, Action action) {
