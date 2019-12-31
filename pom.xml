@@ -49,11 +49,11 @@
 
     <dependencies>
         <dependency>
-            <groupId>me.justeli</groupId>
+            <groupId>me.justeli.instance</groupId>
             <artifactId>Portandum</artifactId>
             <version>3</version>
             <scope>system</scope>
-            <systemPath>${basedir}/../../plugins/Portandum.jar</systemPath>
+            <systemPath>${basedir}/../../plugins/lib/Portandum.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -317,6 +317,14 @@
     <build>
         <finalName>${project.name}</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <outputDirectory>${basedir}/../../output</outputDirectory>
+                </configuration>
+            </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.6.1</version>

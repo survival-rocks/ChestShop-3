@@ -8,6 +8,7 @@ import com.Acrobot.ChestShop.Events.Economy.CurrencyFormatEvent;
 import com.Acrobot.ChestShop.Events.Economy.CurrencySubtractEvent;
 import com.Acrobot.ChestShop.Signs.ChestShopSign;
 import com.Acrobot.ChestShop.UUIDs.NameManager;
+import me.justeli.api.Convert;
 import org.bukkit.World;
 import org.bukkit.inventory.Inventory;
 
@@ -70,7 +71,7 @@ public class Economy {
         CurrencyFormatEvent event = new CurrencyFormatEvent(amount);
         ChestShop.callEvent(event);
 
-        return String.valueOf(event.getAmount().intValue());
+        return Convert.formatCoins(event.getAmount().longValue());
     }
 
     /**

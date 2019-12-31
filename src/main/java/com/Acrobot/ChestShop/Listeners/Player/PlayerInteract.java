@@ -59,7 +59,7 @@ import static org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK;
  */
 public class PlayerInteract implements Listener {
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public static void onInteract(PlayerInteractEvent event) {
         Block block = event.getClickedBlock();
         if (block == null)
