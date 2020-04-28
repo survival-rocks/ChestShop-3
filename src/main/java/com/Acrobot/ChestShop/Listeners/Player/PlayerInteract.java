@@ -1,7 +1,6 @@
 package com.Acrobot.ChestShop.Listeners.Player;
 
 import com.Acrobot.Breeze.Utils.*;
-import com.Acrobot.ChestShop.ChestShop;
 import com.Acrobot.ChestShop.Commands.AccessToggle;
 import com.Acrobot.ChestShop.Configuration.Messages;
 import com.Acrobot.ChestShop.Configuration.Properties;
@@ -16,9 +15,8 @@ import com.Acrobot.ChestShop.Permission;
 import com.Acrobot.ChestShop.Security;
 import com.Acrobot.ChestShop.Signs.ChestShopSign;
 import com.Acrobot.ChestShop.Utils.uBlock;
-import me.justeli.api.Jsonify;
-import me.justeli.hoveritem.HoverItem;
-import net.md_5.bungee.api.chat.TextComponent;
+import me.justeli.api.hoveritem.HoverItem;
+import me.justeli.api.style.Jsonify;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -171,6 +169,7 @@ public class PlayerInteract implements Listener {
         ItemParseEvent parseEvent = new ItemParseEvent(line);
         Bukkit.getPluginManager().callEvent(parseEvent);
         ItemStack item = parseEvent.getItem();
+        if (item == null) return;
 
         Inventory inventory = ((InventoryHolder)chest.getState()).getInventory();
         int amount = InventoryUtil.getAmount(item, inventory);

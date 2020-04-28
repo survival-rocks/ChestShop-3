@@ -8,7 +8,7 @@ import com.Acrobot.ChestShop.Events.Economy.CurrencyFormatEvent;
 import com.Acrobot.ChestShop.Events.Economy.CurrencySubtractEvent;
 import com.Acrobot.ChestShop.Signs.ChestShopSign;
 import com.Acrobot.ChestShop.UUIDs.NameManager;
-import me.justeli.api.Convert;
+import me.justeli.api.style.Convert;
 import org.bukkit.World;
 import org.bukkit.inventory.Inventory;
 
