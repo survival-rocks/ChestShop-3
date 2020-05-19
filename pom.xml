@@ -6,7 +6,7 @@
 
     <groupId>com.acrobot.chestshop</groupId>
     <artifactId>chestshop</artifactId>
-    <version>3.10.1-SNAPSHOT</version>
+    <version>3.10.2-SNAPSHOT</version>
     <description>Chest-and-sign shop plugin for Bukkit</description>
     <name>ChestShop</name>
 
@@ -22,16 +22,16 @@
             <url>http://maven.sk89q.com/repo/</url>
         </repository>
         <repository>
-            <id>bstats-repo</id>
-            <url>http://repo.bstats.org/content/repositories/releases/</url>
+            <id>codemc-repo</id>
+            <url>https://repo.codemc.org/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>lwcx-repo</id>
+            <url>https://ci.ender.zone/plugin/repository/everything/</url>
         </repository>
         <repository>
             <id>vault-repo</id>
             <url>http://nexus.hc.to/content/repositories/pub_releases/</url>
-        </repository>
-        <repository>
-            <id>authme-repo</id>
-            <url>https://repo.codemc.org/repository/maven-public/</url>
         </repository>
         <repository>
             <id>minebench-repo</id>
@@ -44,6 +44,14 @@
         <repository>
             <id>reserve-repo</id>
             <url>https://dl.bintray.com/theneweconomy/java/</url>
+        </repository>
+        <repository>
+            <id>redprotect-repo</id>
+            <url>https://raw.githubusercontent.com/FabioZumbi12/RedProtect/mvn-repo/</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
@@ -97,7 +105,7 @@
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit-lite</artifactId>
-            <version>1.2</version>
+            <version>1.7</version>
             <scope>compile</scope>
         </dependency>
 
@@ -163,26 +171,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.griefcraft</groupId>
-            <artifactId>lwc</artifactId>
-            <version>4.7.0-SNAPSHOT</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.bukkit</groupId>
-                    <artifactId>bukkit</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.bukkit</groupId>
-                    <artifactId>craftbukkit</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
             <groupId>com.griefcraft.lwc</groupId>
             <artifactId>LWCX</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.5</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -245,6 +236,32 @@
                     <artifactId>bukkit</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.TechFortress</groupId>
+            <artifactId>GriefPrevention</artifactId>
+            <version>16.12.0</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.bukkit</groupId>
+                    <artifactId>bukkit</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>br.net.fabiozumbi12.RedProtect</groupId>
+            <artifactId>RedProtect-Spigot</artifactId>
+            <version>7.6.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>br.net.fabiozumbi12.RedProtect</groupId>
+            <artifactId>RedProtect-Core</artifactId>
+            <version>7.6.2</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

@@ -1,6 +1,7 @@
 package com.Acrobot.Breeze.Utils;
 
 import java.math.BigDecimal;
+import java.util.Locale;
 
 /**
  * @author Acrobot
@@ -23,8 +24,8 @@ public class PriceUtil {
      * @return exact price
      */
     public static BigDecimal getExact(String text, char indicator) {
-        String[] split = text.replace(" ", "").toLowerCase().split(":");
-        String character = String.valueOf(indicator).toLowerCase();
+        String[] split = text.replace(" ", "").toLowerCase(Locale.ROOT).split(":");
+        String character = String.valueOf(indicator).toLowerCase(Locale.ROOT);
 
         for (String part : split) {
             if (!part.startsWith(character) && !part.endsWith(character)) {
@@ -40,7 +41,7 @@ public class PriceUtil {
             try {
                 BigDecimal price = new BigDecimal(part);
 
-                if (price.compareTo(MAX) > 0 || price.compareTo(BigDecimal.ZERO) <= 0) {
+                if (price.compareTo(MAX) > 0 || price.compareTo(BigDecimal.ZERO) < 0) {
                     return NO_PRICE;
                 } else {
                     return price;
