@@ -289,6 +289,13 @@
         </dependency>
 
         <dependency>
+            <groupId>me.justeli.common.api</groupId>
+            <artifactId>API</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>net.tnemc</groupId>
             <artifactId>Reserve</artifactId>
             <version>0.1.0.10</version>

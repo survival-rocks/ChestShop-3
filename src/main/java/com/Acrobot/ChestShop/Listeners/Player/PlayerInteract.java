@@ -15,8 +15,7 @@ import com.Acrobot.ChestShop.Permission;
 import com.Acrobot.ChestShop.Security;
 import com.Acrobot.ChestShop.Signs.ChestShopSign;
 import com.Acrobot.ChestShop.Utils.uBlock;
-import me.justeli.api.hoveritem.HoverItem;
-import me.justeli.api.style.Jsonify;
+import me.justeli.api.wide.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -29,7 +28,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -186,11 +184,12 @@ public class PlayerInteract implements Listener {
         Inventory inventory = ((InventoryHolder)chest.getState()).getInventory();
         int amount = InventoryUtil.getAmount(item, inventory);
 
-        player.sendMessage(ChatColor.DARK_AQUA.toString() + ChatColor.UNDERLINE + "Shop owned by " + sign.getLine(0));
+        new Text().title("Shop owned by " + sign.getLine(0)).chatServer(player);
 
-        new Jsonify(" &eHover over item for details: &r").combine(HoverItem.hoverItem(item)).chat(player);
-        player.sendMessage(ChatColor.YELLOW + " Amount item in stock: " + ChatColor.WHITE + amount);
-        player.sendMessage(ChatColor.GRAY.toString() + ChatColor.ITALIC + " Right-click the sign to buy.");
+        new Text().primary("Hover over item for details:").item(item).chatServer(player);
+        new Text().primary("Amount of item in stock:").number(amount).chatServer(player);
+        new Text().info("Right-click the sign to buy.").italic().chatServer(player);
+
         clickedCache.put(player.getUniqueId(), chest);
     }
 
