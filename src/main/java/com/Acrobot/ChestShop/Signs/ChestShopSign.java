@@ -1,6 +1,7 @@
 package com.Acrobot.ChestShop.Signs;
 
 import com.Acrobot.Breeze.Utils.BlockUtil;
+import com.Acrobot.Breeze.Utils.NumberUtil;
 import com.Acrobot.Breeze.Utils.StringUtil;
 import com.Acrobot.ChestShop.Configuration.Properties;
 import com.Acrobot.ChestShop.Containers.AdminInventory;
@@ -10,6 +11,7 @@ import com.Acrobot.ChestShop.Permission;
 import com.Acrobot.ChestShop.UUIDs.NameManager;
 import com.Acrobot.ChestShop.Utils.uBlock;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
@@ -25,18 +27,22 @@ import java.util.regex.Pattern;
 /**
  * @author Acrobot
  */
-public class ChestShopSign {
+public class ChestShopSign {//
     public static final byte NAME_LINE = 0;
     public static final byte QUANTITY_LINE = 1;
     public static final byte PRICE_LINE = 2;
     public static final byte ITEM_LINE = 3;
 
-    public static final Pattern[] SHOP_SIGN_PATTERN = {
-            Pattern.compile("^?[\\w -.:]*$"),
-            Pattern.compile("^[1-9][0-9]{0,5}$"),
-            Pattern.compile("(?i)^[\\d.bs(free) :]+$"),
-            Pattern.compile("^[\\w? #:-]+$")
-    };
+    public static Pattern[] getShopSignPattern(boolean creation)
+    {
+        return new Pattern[]
+            {
+                Pattern.compile("^?[\\w -.:]*$"),
+                Pattern.compile("^[1-9][0-9]{0,5}$"),
+                Pattern.compile(creation? "(?i)^([\\dbs :]+)$" : "(?i)^(§afree|[\\d§ac¢ :]+)$"),
+                Pattern.compile("^(§l\\?|[\\w ?#:-])+$")
+            };
+    }
     public static final String AUTOFILL_CODE = "?";
 
     public static boolean isAdminShop(Inventory ownerInventory) {
@@ -51,21 +57,29 @@ public class ChestShopSign {
         return isAdminShop(sign.getLine(NAME_LINE));
     }
 
-    public static boolean isValid(Sign sign) {
-        return isValid(sign.getLines());
+    public static boolean isValid(Sign sign, boolean creation) {
+        return isValid(sign.getLines(), creation);
     }
 
-    public static boolean isValid(String[] line) {
-        line = StringUtil.stripColourCodes(line);
-        return isValidPreparedSign(line) && (line[PRICE_LINE].toUpperCase(Locale.ROOT).contains("B") || line[PRICE_LINE].toUpperCase(Locale.ROOT).contains("S")) && !line[NAME_LINE].isEmpty();
+    public static boolean isValid(String[] lines, boolean creation) {
+        if (!creation && NumberUtil.isInteger(lines[PRICE_LINE]))
+            return false;
+
+        for (int i = 0; i < 4; i++) {
+            String line = ChatColor.translateAlternateColorCodes('&', lines[i]);
+            if (!getShopSignPattern(creation)[i].matcher(line).matches()) {
+                return false;
+            }
+        }
+        return !lines[NAME_LINE].isEmpty() || creation;
     }
 
     public static boolean isValid(Block sign) {
-        return BlockUtil.isSign(sign) && isValid((Sign) sign.getState());
+        return BlockUtil.isSign(sign) && isValid((Sign) sign.getState(), false);
     }
 
     /**
-     * @deprecated Use {@link #isShopBlock(Block}
+     * @deprecated Use {@link #isShopBlock(Block)}
      */
     @Deprecated
     public static boolean isShopChest(Block chest) {
@@ -139,14 +153,5 @@ public class ChestShopSign {
             return player.getName().equalsIgnoreCase(name);
         }
         return account.getUuid().equals(player.getUniqueId());
-    }
-
-    public static boolean isValidPreparedSign(String[] lines) {
-        for (int i = 0; i < 4; i++) {
-            if (!SHOP_SIGN_PATTERN[i].matcher(lines[i]).matches()) {
-                return false;
-            }
-        }
-        return lines[PRICE_LINE].indexOf(':') == lines[PRICE_LINE].lastIndexOf(':');
     }
 }

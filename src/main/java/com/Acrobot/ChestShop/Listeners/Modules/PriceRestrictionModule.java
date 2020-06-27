@@ -110,8 +110,8 @@ public class PriceRestrictionModule implements Listener {
             return;
         }
 
-        if (PriceUtil.hasBuyPrice(event.getSignLine(PRICE_LINE))) {
-            BigDecimal buyPrice = PriceUtil.getExactBuyPrice(event.getSignLine(PRICE_LINE));
+        if (PriceUtil.hasBuyPrice(event.getSignLine(PRICE_LINE), true)) {
+            BigDecimal buyPrice = PriceUtil.getExactBuyPrice(event.getSignLine(PRICE_LINE), true);
 
             if (isValid("min.buy_price." + itemType) && buyPrice.compareTo(BigDecimal.valueOf(configuration.getDouble("min.buy_price." + itemType) * amount)) < 0) {
                 event.setOutcome(BUY_PRICE_BELOW_MIN);
@@ -122,8 +122,8 @@ public class PriceRestrictionModule implements Listener {
             }
         }
 
-        if (PriceUtil.hasSellPrice(event.getSignLine(PRICE_LINE))) {
-            BigDecimal sellPrice = PriceUtil.getExactSellPrice(event.getSignLine(PRICE_LINE));
+        if (PriceUtil.hasSellPrice(event.getSignLine(PRICE_LINE), true)) {
+            BigDecimal sellPrice = PriceUtil.getExactSellPrice(event.getSignLine(PRICE_LINE), true);
 
             if (isValid("min.sell_price." + itemType) && sellPrice.compareTo(BigDecimal.valueOf(configuration.getDouble("min.sell_price." + itemType) * amount)) < 0) {
                 event.setOutcome(SELL_PRICE_BELOW_MIN);

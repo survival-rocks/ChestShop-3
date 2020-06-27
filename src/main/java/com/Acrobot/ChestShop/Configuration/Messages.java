@@ -6,7 +6,7 @@ import com.Acrobot.Breeze.Configuration.Configuration;
 /**
  * @author Acrobot
  */
-public class Messages {
+public class Messages { //
     public static String prefix = "&a[Shop] &r";
     public static String iteminfo = "&aItem Information: &r";
     public static String iteminfo_fullname = "&fFull Name: &7%item";

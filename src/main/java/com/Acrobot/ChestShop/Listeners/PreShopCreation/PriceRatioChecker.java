@@ -22,9 +22,9 @@ public class PriceRatioChecker implements Listener {
     public static void onPreShopCreation(PreShopCreationEvent event) {
         String priceLine = event.getSignLine(PRICE_LINE);
 
-        if (hasBuyPrice(priceLine) && hasSellPrice(priceLine)) {
-            BigDecimal buyPrice = PriceUtil.getExactBuyPrice(priceLine);
-            BigDecimal sellPrice = PriceUtil.getExactSellPrice(priceLine);
+        if (hasBuyPrice(priceLine, true) && hasSellPrice(priceLine, true)) {
+            BigDecimal buyPrice = PriceUtil.getExactBuyPrice(priceLine, true);
+            BigDecimal sellPrice = PriceUtil.getExactSellPrice(priceLine, true);
             if (sellPrice.compareTo(buyPrice) > 0) {
                 event.setOutcome(SELL_PRICE_HIGHER_THAN_BUY_PRICE);
             }

@@ -3,6 +3,7 @@ package com.Acrobot.ChestShop.Listeners.Block;
 import com.Acrobot.Breeze.Utils.BlockUtil;
 import com.Acrobot.Breeze.Utils.StringUtil;
 import com.Acrobot.ChestShop.ChestShop;
+import com.Acrobot.ChestShop.Configuration.Messages;
 import com.Acrobot.ChestShop.Events.PreShopCreationEvent;
 import com.Acrobot.ChestShop.Events.ShopCreatedEvent;
 import com.Acrobot.ChestShop.Signs.ChestShopSign;
@@ -31,16 +32,22 @@ public class SignCreate implements Listener {
         }
 
         Sign sign = (Sign) signBlock.getState();
+        String[] lines = event.getLines();
 
-        if (ChestShopSign.isValid(sign) && !NameManager.canUseName(event.getPlayer(), OTHER_NAME_DESTROY, StringUtil.stripColourCodes(sign.getLine(NAME_LINE)))) {
-            event.setCancelled(true);
-            sign.update();
+        if (ChestShopSign.isValid(lines, false))
+        {
+            signBlock.breakNaturally();
+            event.getPlayer().sendMessage(Messages.prefix(Messages.INVALID_SHOP_PRICE));
             return;
         }
 
-        String[] lines = StringUtil.stripColourCodes(event.getLines());
+        if (!ChestShopSign.isValid(lines, true)) {
+            return;
+        }
 
-        if (!ChestShopSign.isValidPreparedSign(lines)) {
+        if (!NameManager.canUseName(event.getPlayer(), OTHER_NAME_DESTROY, StringUtil.stripColourCodes(sign.getLine(NAME_LINE)))) {
+            event.setCancelled(true);
+            sign.update();
             return;
         }
 

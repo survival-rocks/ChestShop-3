@@ -42,7 +42,7 @@ public class PermissionChecker implements Listener {
         }
 
         String matID = item.getType().toString().toLowerCase(Locale.ROOT);
-        if (PriceUtil.hasBuyPrice(priceLine)) {
+        if (PriceUtil.hasBuyPrice(priceLine, true)) {
             if (Permission.has(player, SHOP_CREATION_BUY_ID + matID)) {
                 return;
             }
@@ -53,7 +53,7 @@ public class PermissionChecker implements Listener {
             return;
         }
 
-        if (PriceUtil.hasSellPrice(priceLine)) {
+        if (PriceUtil.hasSellPrice(priceLine, true)) {
             if (Permission.has(player, SHOP_CREATION_SELL_ID + matID)) {
                 return;
             }

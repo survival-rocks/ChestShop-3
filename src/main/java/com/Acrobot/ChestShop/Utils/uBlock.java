@@ -17,7 +17,7 @@ import org.bukkit.inventory.InventoryHolder;
 /**
  * @author Acrobot
  */
-public class uBlock {
+public class uBlock {//
     public static final BlockFace[] CHEST_EXTENSION_FACES = {BlockFace.EAST, BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH};
     public static final BlockFace[] SHOP_FACES = {BlockFace.SELF, BlockFace.DOWN, BlockFace.UP, BlockFace.EAST, BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH};
     @Deprecated
@@ -28,12 +28,12 @@ public class uBlock {
     }
 
     public static Sign getConnectedSign(Block block) {
-        Sign sign = uBlock.findAnyNearbyShopSign(block);
+        Sign sign = findAnyNearbyShopSign(block);
 
         if (sign == null) {
             Block neighbor = findNeighbor(block);
             if (neighbor != null) {
-                sign = uBlock.findAnyNearbyShopSign(neighbor);
+                sign = findAnyNearbyShopSign(neighbor);
             }
         }
 
@@ -140,7 +140,7 @@ public class uBlock {
 
             Sign sign = (Sign) faceBlock.getState();
 
-            if (ChestShopSign.isValid(sign) && signIsAttachedToBlock(sign, block)) {
+            if (ChestShopSign.isValid(sign, false) && signIsAttachedToBlock(sign, block)) {
                 if (!sign.getLine(0).equals(originalName)) {
                     return sign;
                 } else if (ownerShopSign == null) {
@@ -162,7 +162,7 @@ public class uBlock {
 
             Sign sign = (Sign) faceBlock.getState();
 
-            if (ChestShopSign.isValid(sign)) {
+            if (ChestShopSign.isValid(sign, false)) {
                 return sign;
             }
         }

@@ -53,7 +53,7 @@ public class DiscountModule implements Listener {
 
         Player client = event.getClient();
 
-        if (!PriceUtil.hasBuyPrice(event.getSign().getLine(PRICE_LINE))) {
+        if (!PriceUtil.hasBuyPrice(event.getSign().getLine(PRICE_LINE), false)) {
             return;
         }
 

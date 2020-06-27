@@ -83,7 +83,7 @@ public class PlayerInteract implements Listener {
             return;
 
         Sign sign = (Sign) block.getState();
-        if (!ChestShopSign.isValid(sign)) {
+        if (!ChestShopSign.isValid(sign, false)) {
             return;
         }
 
@@ -98,10 +98,11 @@ public class PlayerInteract implements Listener {
                         player.sendMessage(ChatColor.RED + "Error while generating shop sign item name. Please contact an admin or take a look at the console/log!");
                         com.Acrobot.ChestShop.ChestShop.getPlugin().getLogger().log(Level.SEVERE, "Error while generating shop sign item name", e);
                         return;
-                    }
+                    }/*
                     String[] lines = sign.getLines();
                     lines[ITEM_LINE] = itemCode;
 
+                     todo
                     SignChangeEvent changeEvent = new SignChangeEvent(block, player, lines);
                     com.Acrobot.ChestShop.ChestShop.callEvent(changeEvent);
                     if (!changeEvent.isCancelled()) {
@@ -109,7 +110,11 @@ public class PlayerInteract implements Listener {
                             sign.setLine(i, changeEvent.getLine(i));
                         }
                         sign.update();
-                    }
+                    }*/
+                    sign.setLine(ITEM_LINE, itemCode);
+                    sign.update();
+
+                    player.sendMessage(Messages.prefix(Messages.SHOP_CREATED));
                 } else {
                     player.sendMessage(Messages.prefix(Messages.NO_ITEM_IN_HAND));
                 }
@@ -152,8 +157,8 @@ public class PlayerInteract implements Listener {
         Bukkit.getPluginManager().callEvent(tEvent);
     }
 
+    // code from Eli
     private static final HashMap<UUID, Block> clickedCache = new HashMap<>();
-
     private static void tellWhatItem (Block chest, Player player)
     {
         if (clickedCache.containsKey(player.getUniqueId()) && clickedCache.get(player.getUniqueId()).equals(chest))
@@ -161,7 +166,7 @@ public class PlayerInteract implements Listener {
 
         Sign sign = uBlock.getConnectedSign(chest);
 
-        if (!sign.getLine(2).toLowerCase().contains("b"))
+        if (!sign.getLine(2).toLowerCase().contains(PriceUtil.BUY_INDICATOR))
             return;
 
         String line = sign.getLine(3);
@@ -169,16 +174,17 @@ public class PlayerInteract implements Listener {
         ItemParseEvent parseEvent = new ItemParseEvent(line);
         Bukkit.getPluginManager().callEvent(parseEvent);
         ItemStack item = parseEvent.getItem();
-        if (item == null) return;
+        if (item == null)
+            return;
 
         Inventory inventory = ((InventoryHolder)chest.getState()).getInventory();
         int amount = InventoryUtil.getAmount(item, inventory);
 
-        player.sendMessage("     - " + ChatColor.DARK_AQUA + "Shop of " + sign.getLine(0) + ChatColor.WHITE + " -");
+        player.sendMessage(ChatColor.DARK_AQUA.toString() + ChatColor.UNDERLINE + "Shop owned by " + sign.getLine(0));
 
-        new Jsonify(" &eShop item &7&o(hover)&e: &r").combine(HoverItem.hoverItem(item)).chat(player);
-        player.sendMessage(ChatColor.YELLOW + " Amount in stock: " + ChatColor.WHITE + amount);
-        player.sendMessage(ChatColor.GRAY + " Right-click the sign to buy.");
+        new Jsonify(" &eHover over item for details: &r").combine(HoverItem.hoverItem(item)).chat(player);
+        player.sendMessage(ChatColor.YELLOW + " Amount item in stock: " + ChatColor.WHITE + amount);
+        player.sendMessage(ChatColor.GRAY.toString() + ChatColor.ITALIC + " Right-click the sign to buy.");
         clickedCache.put(player.getUniqueId(), chest);
     }
 
@@ -209,7 +215,7 @@ public class PlayerInteract implements Listener {
         }
 
         Action buy = Properties.REVERSE_BUTTONS ? LEFT_CLICK_BLOCK : RIGHT_CLICK_BLOCK;
-        BigDecimal price = (action == buy ? PriceUtil.getExactBuyPrice(prices) : PriceUtil.getExactSellPrice(prices));
+        BigDecimal price = (action == buy ? PriceUtil.getExactBuyPrice(prices, false) : PriceUtil.getExactSellPrice(prices, false));
 
         Container shopBlock = uBlock.findConnectedContainer(sign);
         Inventory ownerInventory = shopBlock != null ? shopBlock.getInventory() : null;

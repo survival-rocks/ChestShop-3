@@ -85,7 +85,7 @@ public class Security {
 
             Sign sign = (Sign) block.getState();
 
-            if (!ChestShopSign.isValid(sign) || !BlockUtil.getAttachedBlock(sign).equals(baseBlock)) {
+            if (!ChestShopSign.isValid(sign, false) || !BlockUtil.getAttachedBlock(sign).equals(baseBlock)) {
                 continue;
             }
 

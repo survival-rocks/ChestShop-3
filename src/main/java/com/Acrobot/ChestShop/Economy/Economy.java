@@ -6,9 +6,9 @@ import com.Acrobot.ChestShop.Events.Economy.CurrencyAddEvent;
 import com.Acrobot.ChestShop.Events.Economy.CurrencyCheckEvent;
 import com.Acrobot.ChestShop.Events.Economy.CurrencyFormatEvent;
 import com.Acrobot.ChestShop.Events.Economy.CurrencySubtractEvent;
+import com.Acrobot.ChestShop.Listeners.Economy.Plugins.VaultListener;
 import com.Acrobot.ChestShop.Signs.ChestShopSign;
 import com.Acrobot.ChestShop.UUIDs.NameManager;
-import me.justeli.api.style.Convert;
 import org.bukkit.World;
 import org.bukkit.inventory.Inventory;
 
@@ -71,7 +71,8 @@ public class Economy {
         CurrencyFormatEvent event = new CurrencyFormatEvent(amount);
         ChestShop.callEvent(event);
 
-        return Convert.formatCoins(event.getAmount().longValue());
+        // code from Eli
+        return VaultListener.getProvider().format(event.getAmount().longValue());
     }
 
     /**

@@ -28,7 +28,7 @@ import static com.Acrobot.ChestShop.Signs.ChestShopSign.NAME_LINE;
 /**
  * @author Acrobot
  */
-public class ShopRefundListener implements Listener {
+public class ShopRefundListener implements Listener {//?
     @EventHandler(priority = EventPriority.MONITOR)
     public static void onShopDestroy(ShopDestroyedEvent event) {
         BigDecimal refundPrice = Properties.SHOP_REFUND_PRICE;
