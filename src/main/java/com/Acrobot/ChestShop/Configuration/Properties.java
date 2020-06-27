@@ -100,7 +100,13 @@ public class Properties {
 
     @PrecededBySpace
     @ConfigurationComment("Do you want to turn off the automatic updates of ChestShop?")
-    public static boolean TURN_OFF_UPDATES = false;
+    public static boolean TURN_OFF_UPDATES = true;
+
+    @ConfigurationComment("Do you want to turn off the automatic notifications for new development builds?")
+    public static boolean TURN_OFF_DEV_UPDATE_NOTIFIER = false;
+
+    @ConfigurationComment("Do you want to include some values of this config in the metrics? (This will not leak sensitive data but help in the development process)")
+    public static boolean INCLUDE_SETTINGS_IN_METRICS = true;
 
     @PrecededBySpace
     @ConfigurationComment("How large should the internal caches be?")
@@ -129,6 +135,9 @@ public class Properties {
 
     @ConfigurationComment("If true, people will be able to buy/sell in 64 stacks while holding the crouch button.")
     public static boolean SHIFT_SELLS_IN_STACKS = false;
+
+    @ConfigurationComment("If true, people will be able to sell/buy everything available of the same type.")
+    public static boolean SHIFT_SELLS_EVERYTHING = false;
 
     @ConfigurationComment("What can you do by clicking shift with SHIFT_SELLS_IN_STACKS turned on? (ALL/BUY/SELL)")
     public static String SHIFT_ALLOWS = "ALL";
@@ -245,6 +254,9 @@ public class Properties {
 
     @ConfigurationComment("Do you want to disable the hopper protection, which prevents Hopper-Minecarts from taking items out of shops?")
     public static boolean TURN_OFF_HOPPER_PROTECTION = false;
+
+    @ConfigurationComment("Only allow users to buy/sell that have access to the sign's protection? (E.g. LWC protection)")
+    public static boolean CHECK_ACCESS_FOR_SHOP_USE = false;
 
     @ConfigurationComment("Do you want to protect shop chests with LWC?")
     public static boolean PROTECT_CHEST_WITH_LWC = false;

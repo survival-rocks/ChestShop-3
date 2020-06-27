@@ -47,7 +47,6 @@ import static com.Acrobot.ChestShop.Events.TransactionEvent.TransactionType;
 import static com.Acrobot.ChestShop.Events.TransactionEvent.TransactionType.BUY;
 import static com.Acrobot.ChestShop.Events.TransactionEvent.TransactionType.SELL;
 import static com.Acrobot.ChestShop.Permission.OTHER_NAME_CREATE;
-import static com.Acrobot.ChestShop.Permission.OTHER_NAME_DESTROY;
 import static com.Acrobot.ChestShop.Signs.ChestShopSign.*;
 import static org.bukkit.event.block.Action.LEFT_CLICK_BLOCK;
 import static org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK;
@@ -128,7 +127,7 @@ public class PlayerInteract implements Listener {
             if (Properties.IGNORE_ACCESS_PERMS || ChestShopSign.isOwner(player, sign)) {
                 if (Properties.ALLOW_SIGN_CHEST_OPEN && !(Properties.IGNORE_CREATIVE_MODE && player.getGameMode() == GameMode.CREATIVE)) {
                     if (player.isSneaking() || player.isInsideVehicle()
-                            || (Properties.ALLOW_LEFT_CLICK_DESTROYING && action == LEFT_CLICK_BLOCK && ChestShopSign.hasPermission(player, OTHER_NAME_DESTROY, sign))) {
+                            || (Properties.ALLOW_LEFT_CLICK_DESTROYING && action == LEFT_CLICK_BLOCK)) {
                         return;
                     }
                     event.setCancelled(true);
@@ -142,6 +141,13 @@ public class PlayerInteract implements Listener {
 
         if (action == RIGHT_CLICK_BLOCK) {
             event.setCancelled(true);
+        } else if (action == LEFT_CLICK_BLOCK && !ChestShopSign.canAccess(player, sign)) {
+            event.setCancelled(true);
+        }
+
+        if (Properties.CHECK_ACCESS_FOR_SHOP_USE && !Security.canAccess(player, block, true)) {
+            player.sendMessage(Messages.prefix(Messages.TRADE_DENIED));
+            return;
         }
 
         //Bukkit.getLogger().info("ChestShop - DEBUG - "+block.getWorld().getName()+": "+block.getLocation().getBlockX()+", "+block.getLocation().getBlockY()+", "+block.getLocation().getBlockZ());
@@ -243,6 +249,20 @@ public class PlayerInteract implements Listener {
             if (newAmount > 0) {
                 price = price.divide(BigDecimal.valueOf(amount), MathContext.DECIMAL128).multiply(BigDecimal.valueOf(newAmount)).setScale(Properties.PRICE_PRECISION, BigDecimal.ROUND_HALF_UP);
                 amount = newAmount;
+            }
+        } else if (Properties.SHIFT_SELLS_EVERYTHING && player.isSneaking() && !price.equals(PriceUtil.NO_PRICE) && isAllowedForShift(action == buy)) {
+            if (action != buy) {
+                int newAmount = InventoryUtil.getAmount(item, player.getInventory());
+                if (newAmount > 0) {
+                    price = price.divide(BigDecimal.valueOf(amount), MathContext.DECIMAL128).multiply(BigDecimal.valueOf(newAmount)).setScale(Properties.PRICE_PRECISION, BigDecimal.ROUND_HALF_UP);
+                    amount = newAmount;
+                }
+            } else if (!adminShop && ownerInventory != null) {
+                int newAmount = InventoryUtil.getAmount(item, ownerInventory);
+                if (newAmount > 0) {
+                    price = price.divide(BigDecimal.valueOf(amount), MathContext.DECIMAL128).multiply(BigDecimal.valueOf(newAmount)).setScale(Properties.PRICE_PRECISION, BigDecimal.ROUND_HALF_UP);
+                    amount = newAmount;
+                }
             }
         }
 

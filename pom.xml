@@ -30,6 +30,10 @@
             <url>https://ci.ender.zone/plugin/repository/everything/</url>
         </repository>
         <repository>
+            <id>vault-repo</id>
+            <url>http://nexus.hc.to/content/repositories/pub_releases/</url>
+        </repository>
+        <repository>
             <id>minebench-repo</id>
             <url>https://repo.minebench.de/</url>
         </repository>
@@ -53,13 +57,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>me.justeli.api</groupId>
-            <artifactId>QuantumAPI</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
@@ -82,10 +79,17 @@
         </dependency>
 
         <dependency>
-            <groupId>org.mcstats.bukkit</groupId>
-            <artifactId>metrics</artifactId>
-            <version>R8-SNAPSHOT</version>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>1.7</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.milkbowl.vault</groupId>
+            <artifactId>Vault</artifactId>
+            <version>1.6.6</version>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.bukkit</groupId>
@@ -96,20 +100,6 @@
                     <artifactId>craftbukkit</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.bstats</groupId>
-            <artifactId>bstats-bukkit-lite</artifactId>
-            <version>1.7</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.MilkBowl</groupId>
-            <artifactId>VaultAPI</artifactId>
-            <version>1.7</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -322,9 +312,19 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.3.1</version>
+                <version>3.2.0</version>
                 <configuration>
-                    <outputDirectory>${basedir}/../../output</outputDirectory>
+                    <forceCreation>true</forceCreation>
+                    <archive>
+                        <manifest>
+                            <addDefaultEntries>true</addDefaultEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <Distribution-Type>${buildType}</Distribution-Type>
+                            <Built-At>${maven.build.timestamp}</Built-At>
+                            <Build-Jdk>${java.runtime.version}</Build-Jdk>
+                        </manifestEntries>
+                    </archive>
                 </configuration>
             </plugin>
             <plugin>
@@ -348,7 +348,6 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>org.mcstats.bukkit</include>
                                     <include>org.bstats:*</include>
                                     <include>net.gravitydevelopment.updater</include>
                                     <include>com.j256.ormlite</include>
@@ -357,10 +356,6 @@
                                 </includes>
                             </artifactSet>
                             <relocations>
-                                <relocation>
-                                    <pattern>org.mcstats</pattern>
-                                    <shadedPattern>com.Acrobot.ChestShop.Metrics.MCStats</shadedPattern>
-                                </relocation>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
                                     <shadedPattern>com.Acrobot.ChestShop.Metrics.BStats</shadedPattern>
@@ -389,12 +384,20 @@
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
             </resource>
+            <resource>
+                <directory>.</directory>
+                <includes>
+                    <include>LICENSE</include>
+                    <include>README.md</include>
+                </includes>
+            </resource>
         </resources>
     </build>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <build.number>${buildNumber}</build.number>
+        <user.name>${buildType}</user.name>
         <bukkit.plugin.version>${project.version} ${buildDescription}</bukkit.plugin.version>
     </properties>
 
@@ -434,7 +437,7 @@
                 <dependency>
                     <groupId>org.bukkit</groupId>
                     <artifactId>bukkit</artifactId>
-                    <version>1.15.2-R0.1-SNAPSHOT</version>
+                    <version>1.13.2-R0.1-SNAPSHOT</version>
                     <scope>provided</scope>
                 </dependency>
             </dependencies>
@@ -464,6 +467,7 @@
                 </property>
             </activation>
             <properties>
+                <buildType>manual</buildType>
                 <buildNumber>0</buildNumber>
                 <buildDescription>(compiled at ${maven.build.timestamp})</buildDescription>
             </properties>
@@ -477,6 +481,7 @@
                 </property>
             </activation>
             <properties>
+                <buildType>jenkins</buildType>
                 <buildNumber>${env.BUILD_NUMBER}</buildNumber>
                 <buildDescription>(build ${env.BUILD_NUMBER})</buildDescription>
             </properties>
