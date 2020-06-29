@@ -77,34 +77,6 @@ public class LightweightChestProtection implements Listener {
     }
 
     @EventHandler
-    public static void onShopCreation(ShopCreatedEvent event) {
-        Player player = event.getPlayer();
-        Sign sign = event.getSign();
-        Container connectedContainer = event.getContainer();
-
-        String message = null;
-        if (Properties.PROTECT_SIGN_WITH_LWC) {
-            if (Security.protect(player, sign.getBlock(), event.getOwnerAccount() != null ? event.getOwnerAccount().getUuid() : player.getUniqueId(), Properties.LWC_SIGN_PROTECTION_TYPE)) {
-                message = Messages.PROTECTED_SHOP_SIGN;
-            } else {
-                message = Messages.NOT_ENOUGH_PROTECTIONS;
-            }
-        }
-
-        if (Properties.PROTECT_CHEST_WITH_LWC && connectedContainer != null) {
-            if (Security.protect(player, connectedContainer.getBlock(), event.getOwnerAccount() != null ? event.getOwnerAccount().getUuid() : player.getUniqueId(), Properties.LWC_CHEST_PROTECTION_TYPE)) {
-                message = Messages.PROTECTED_SHOP;
-            } else if (message == null) {
-                message = Messages.NOT_ENOUGH_PROTECTIONS;
-            }
-        }
-
-        if (message != null) {
-            player.sendMessage(Messages.prefix(message));
-        }
-    }
-
-    @EventHandler
     public void onProtectionCheck(ProtectionCheckEvent event) {
         if (event.getResult() == Event.Result.DENY) {
             return;

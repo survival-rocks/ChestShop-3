@@ -73,4 +73,41 @@ public class Account {
     public void setLastSeen(Date lastSeen) {
         this.lastSeen = lastSeen;
     }
+
+    /*
+        private String companyName;
+    private Company company;
+    private Set<UUID> owners;
+
+    public Account() {
+        //empty constructor, needed for ORMLite
+    }
+
+    public Account(String name) {
+        this.companyName = name;
+        this.company = new Company(name);
+        this.owners = company.getPrivateShareHolders();
+    }
+
+    public String getCompanyName () {
+        return companyName;
+    }
+
+    public void setCompanyName (String name) {
+        this.companyName = name;
+    }
+
+    public Company getCompany ()
+    {
+        return company;
+    }
+
+    public Set<UUID> getOwners () {
+        return owners;
+    }
+
+    public void setOwners (Set<UUID> owners) {
+        this.owners = owners;
+    }
+     */
 }

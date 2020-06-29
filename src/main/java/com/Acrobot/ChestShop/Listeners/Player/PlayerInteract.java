@@ -203,7 +203,7 @@ public class PlayerInteract implements Listener {
         Bukkit.getPluginManager().callEvent(accountQueryEvent);
         Account account = accountQueryEvent.getAccount();
         if (account == null) {
-            player.sendMessage(Messages.prefix(Messages.PLAYER_NOT_FOUND));
+            player.sendMessage(Messages.prefix(Messages.COMPANY_NOT_FOUND));
             return null;
         }
 

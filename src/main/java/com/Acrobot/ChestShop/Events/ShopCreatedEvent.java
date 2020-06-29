@@ -1,6 +1,6 @@
 package com.Acrobot.ChestShop.Events;
 
-import com.Acrobot.ChestShop.Database.Account;
+import me.justeli.survival.companies.storage.Company;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Container;
 import org.bukkit.block.Sign;
@@ -22,25 +22,15 @@ public class ShopCreatedEvent extends Event {
 
     private final Sign sign;
     private final String[] signLines;
-    @Nullable private final Account ownerAccount;
+    private final Company company;
     @Nullable private final Container container;
 
-    @Deprecated
-    public ShopCreatedEvent(Player creator, Sign sign, @Nullable Chest chest, String[] signLines) {
-        this(creator, sign, (Container) chest, signLines);
-    }
-
-    @Deprecated
-    public ShopCreatedEvent(Player creator, Sign sign, @Nullable Container container, String[] signLines) {
-        this(creator, sign, container, signLines, null);
-    }
-
-    public ShopCreatedEvent(Player creator, Sign sign, @Nullable Container container, String[] signLines, @Nullable Account ownerAccount) {
+    public ShopCreatedEvent(Player creator, Sign sign, @Nullable Container container, String[] signLines, Company company) {
         this.creator = creator;
         this.sign = sign;
         this.container = container;
         this.signLines = signLines.clone();
-        this.ownerAccount = ownerAccount;
+        this.company = company;
     }
 
     /**
@@ -103,8 +93,8 @@ public class ShopCreatedEvent extends Event {
      * @return The account of the shop's owner; null if no Account could be found
      */
     @Nullable
-    public Account getOwnerAccount() {
-        return ownerAccount;
+    public Company getCompany() {
+        return company;
     }
 
     /**
@@ -113,7 +103,7 @@ public class ShopCreatedEvent extends Event {
      * @return <tt>true</tt> if the owner account is the creators one (or null); <tt>false</tt> if it's not
      */
     public boolean createdByOwner() {
-        return ownerAccount == null || ownerAccount.getUuid().equals(creator.getUniqueId());
+        return company.exists() && company.getPrivateShareHolders().contains(creator.getUniqueId());
     }
 
     public HandlerList getHandlers() {

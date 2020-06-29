@@ -5,7 +5,6 @@ import com.Acrobot.Breeze.Utils.MaterialUtil;
 import com.Acrobot.Breeze.Utils.NumberUtil;
 import com.Acrobot.ChestShop.Configuration.Messages;
 import com.Acrobot.ChestShop.Events.ItemParseEvent;
-import com.Acrobot.ChestShop.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -58,7 +57,7 @@ public class Give implements CommandExecutor {
         }
 
         if (receiver == null) {
-            sender.sendMessage(Messages.prefix(Messages.PLAYER_NOT_FOUND));
+            sender.sendMessage(Messages.prefix(Messages.COMPANY_NOT_FOUND));
             return true;
         }
 

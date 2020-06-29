@@ -1,6 +1,6 @@
 package com.Acrobot.ChestShop.Events;
 
-import com.Acrobot.ChestShop.Database.Account;
+import me.justeli.survival.companies.storage.Company;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -18,8 +18,7 @@ public class PreShopCreationEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
 
     private Player creator;
-    @Nullable private Account ownerAccount = null;
-
+    private Company company;
     private CreationOutcome outcome = CreationOutcome.SHOP_CREATED_SUCCESSFULLY;
     private Sign sign;
     private String[] signLines;
@@ -152,17 +151,17 @@ public class PreShopCreationEvent extends Event implements Cancellable {
      * @return the Account of the shop owner; null if not found
      */
     @Nullable
-    public Account getOwnerAccount() {
-        return ownerAccount;
+    public Company getCompany() {
+        return company;
     }
 
     /**
      * Set the account of the shop owner
      *
-     * @param ownerAccount the Account of the shop owner
+     * @param company the Account of the shop owner
      */
-    public void setOwnerAccount(@Nullable Account ownerAccount) {
-        this.ownerAccount = ownerAccount;
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     public HandlerList getHandlers() {
@@ -183,7 +182,7 @@ public class PreShopCreationEvent extends Event implements Cancellable {
 
         ITEM_AUTOFILL(false),
 
-        UNKNOWN_PLAYER,
+        UNKNOWN_COMPANY,
 
         SELL_PRICE_HIGHER_THAN_BUY_PRICE,
         SELL_PRICE_ABOVE_MAX,
@@ -198,6 +197,9 @@ public class PreShopCreationEvent extends Event implements Cancellable {
         NO_PERMISSION_FOR_CHEST,
 
         NOT_ENOUGH_MONEY,
+        NO_OWNING_COMPANIES,
+        NOT_PART_OF_COMPANY,
+        CREATE_VIA_COMPANY,
 
         /**
          * For plugin use

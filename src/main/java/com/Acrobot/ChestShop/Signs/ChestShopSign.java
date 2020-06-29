@@ -10,6 +10,7 @@ import com.Acrobot.ChestShop.Events.AccountQueryEvent;
 import com.Acrobot.ChestShop.Permission;
 import com.Acrobot.ChestShop.UUIDs.NameManager;
 import com.Acrobot.ChestShop.Utils.uBlock;
+import me.justeli.survival.companies.storage.Company;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
@@ -146,12 +147,10 @@ public class ChestShopSign {//
         String name = sign.getLine(NAME_LINE);
         if (name == null || name.isEmpty()) return false;
 
-        AccountQueryEvent accountQueryEvent = new AccountQueryEvent(name);
-        Bukkit.getPluginManager().callEvent(accountQueryEvent);
-        Account account = accountQueryEvent.getAccount();
-        if (account == null) {
-            return player.getName().equalsIgnoreCase(name);
-        }
-        return account.getUuid().equals(player.getUniqueId());
+        Company company = new Company(name);
+        if (!company.exists())
+            return false;
+
+        return company.getPrivateShareHolders().contains(player.getUniqueId());
     }
 }

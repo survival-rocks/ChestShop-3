@@ -15,6 +15,7 @@ import com.Acrobot.ChestShop.Signs.ChestShopSign;
 import com.j256.ormlite.dao.Dao;
 
 import com.j256.ormlite.stmt.SelectArg;
+import me.justeli.survival.companies.storage.Company;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -367,14 +368,6 @@ public class NameManager implements Listener {
         return shortenedName;
     }
 
-    /**
-     * @deprecated Use {@link #canUseName(Player, Permission, String)} to provide specific information about how the player wants to use the name
-     */
-    @Deprecated
-    public static boolean canUseName(Player player, String name) {
-        return canUseName(player, OTHER_NAME, name);
-    }
-
     public static boolean canUseName(Player player, Permission base, String name) {
         if (ChestShopSign.isAdminShop(name)) {
             return Permission.has(player, Permission.ADMIN_SHOP);
@@ -384,19 +377,12 @@ public class NameManager implements Listener {
             return true;
         }
 
-        AccountQueryEvent queryEvent = new AccountQueryEvent(name);
-        queryEvent.searchOfflinePlayers(false);
-        ChestShop.callEvent(queryEvent);
-        Account account = queryEvent.getAccount();
-        if (account == null) {
+        Company company = new Company(name);
+        if (!company.exists()) {
             return false;
         }
-        if (!account.getName().equalsIgnoreCase(name) && Permission.otherName(player, base, account.getName())) {
-            return true;
-        }
-        AccountAccessEvent event = new AccountAccessEvent(player, account);
-        ChestShop.callEvent(event);
-        return event.canAccess();
+
+        return company.getPrivateShareHolders().contains(player.getUniqueId());
     }
 
     @EventHandler

@@ -109,15 +109,6 @@ public class TransactionEvent extends Event implements Cancellable {
     }
 
     /**
-     * @return Shop's owner
-     * @deprecated Use {@link #getOwnerAccount}
-     */
-    @Deprecated
-    public OfflinePlayer getOwner() {
-        return Bukkit.getOfflinePlayer(ownerAccount.getUuid());
-    }
-
-    /**
      * @return Stock available
      */
     public ItemStack[] getStock() {
