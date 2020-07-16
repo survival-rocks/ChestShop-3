@@ -18,7 +18,7 @@ public class EconomicModule implements Listener {
         CurrencyTransferEvent currencyTransferEvent = new CurrencyTransferEvent(
                 event.getExactPrice(),
                 event.getClient(),
-                event.getOwnerAccount().getUuid(),
+                event.getCompany(),
                 event.getTransactionType() == BUY ? CurrencyTransferEvent.Direction.PARTNER : CurrencyTransferEvent.Direction.INITIATOR
         );
         ChestShop.callEvent(currencyTransferEvent);

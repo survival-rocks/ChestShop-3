@@ -103,7 +103,7 @@ public class ShopCreatedEvent extends Event {
      * @return <tt>true</tt> if the owner account is the creators one (or null); <tt>false</tt> if it's not
      */
     public boolean createdByOwner() {
-        return company.exists() && company.getPrivateShareHolders().contains(creator.getUniqueId());
+        return company != null && company.getPrivateShareHolders().contains(creator.getUniqueId());
     }
 
     public HandlerList getHandlers() {

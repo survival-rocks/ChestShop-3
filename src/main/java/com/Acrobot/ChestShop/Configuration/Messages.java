@@ -64,6 +64,7 @@ public class Messages { //
     public static String INVALID_SHOP_PRICE = "The shop has an invalid price.";
     public static String INVALID_SHOP_QUANTITY = "The shop has an invalid quantity.";
     public static String CANNOT_ACCESS_THE_CHEST = "You don't have permissions to access this chest.";
+    public static String TOO_CLOSE_TO_OTHERS = "You cannot create a shop within 100 blocks from another company.";
 
     @PrecededBySpace
     public static String SELL_PRICE_ABOVE_MAX = "Sell price is above maximum.";

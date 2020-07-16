@@ -16,6 +16,8 @@ import com.Acrobot.ChestShop.Security;
 import com.Acrobot.ChestShop.Signs.ChestShopSign;
 import com.Acrobot.ChestShop.Utils.uBlock;
 import me.justeli.api.wide.Text;
+import me.justeli.survival.companies.Companies;
+import me.justeli.survival.companies.storage.Company;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -28,6 +30,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -95,11 +98,10 @@ public class PlayerInteract implements Listener {
                         player.sendMessage(ChatColor.RED + "Error while generating shop sign item name. Please contact an admin or take a look at the console/log!");
                         com.Acrobot.ChestShop.ChestShop.getPlugin().getLogger().log(Level.SEVERE, "Error while generating shop sign item name", e);
                         return;
-                    }/*
+                    }
                     String[] lines = sign.getLines();
                     lines[ITEM_LINE] = itemCode;
 
-                     todo
                     SignChangeEvent changeEvent = new SignChangeEvent(block, player, lines);
                     com.Acrobot.ChestShop.ChestShop.callEvent(changeEvent);
                     if (!changeEvent.isCancelled()) {
@@ -107,7 +109,7 @@ public class PlayerInteract implements Listener {
                             sign.setLine(i, changeEvent.getLine(i));
                         }
                         sign.update();
-                    }*/
+                    }
                     sign.setLine(ITEM_LINE, itemCode);
                     sign.update();
 
@@ -123,7 +125,8 @@ public class PlayerInteract implements Listener {
 
         if (!AccessToggle.isIgnoring(player) && ChestShopSign.canAccess(player, sign) && !ChestShopSign.isAdminShop(sign)) {
             if (Properties.IGNORE_ACCESS_PERMS || ChestShopSign.isOwner(player, sign)) {
-                if (Properties.ALLOW_SIGN_CHEST_OPEN && !(Properties.IGNORE_CREATIVE_MODE && player.getGameMode() == GameMode.CREATIVE)) {
+                if ((Properties.ALLOW_SIGN_CHEST_OPEN && !player.getInventory().getItemInMainHand().getType().name().contains("_DYE"))
+                        && !(Properties.IGNORE_CREATIVE_MODE && player.getGameMode() == GameMode.CREATIVE)) {
                     if (player.isSneaking() || player.isInsideVehicle()
                             || (Properties.ALLOW_LEFT_CLICK_DESTROYING && action == LEFT_CLICK_BLOCK)) {
                         return;
@@ -199,24 +202,12 @@ public class PlayerInteract implements Listener {
         String prices = sign.getLine(PRICE_LINE);
         String material = sign.getLine(ITEM_LINE);
 
-        AccountQueryEvent accountQueryEvent = new AccountQueryEvent(name);
-        Bukkit.getPluginManager().callEvent(accountQueryEvent);
-        Account account = accountQueryEvent.getAccount();
-        if (account == null) {
-            player.sendMessage(Messages.prefix(Messages.COMPANY_NOT_FOUND));
-            return null;
-        }
-
         boolean adminShop = ChestShopSign.isAdminShop(sign);
 
-        // check if player exists in economy
-        if (!adminShop) {
-            AccountCheckEvent event = new AccountCheckEvent(account.getUuid(), player.getWorld());
-            Bukkit.getPluginManager().callEvent(event);
-            if(!event.hasAccount()) {
-                player.sendMessage(Messages.prefix(Messages.NO_ECONOMY_ACCOUNT));
-                return null;
-            }
+        Company company = Companies.get(name);
+        if (company == null) {
+            player.sendMessage(Messages.prefix(Messages.COMPANY_NOT_FOUND));
+            return null;
         }
 
         Action buy = Properties.REVERSE_BUTTONS ? LEFT_CLICK_BLOCK : RIGHT_CLICK_BLOCK;
@@ -274,7 +265,7 @@ public class PlayerInteract implements Listener {
         }
 
         TransactionType transactionType = (action == buy ? BUY : SELL);
-        return new PreTransactionEvent(ownerInventory, player.getInventory(), items, price, player, account, sign, transactionType);
+        return new PreTransactionEvent(ownerInventory, player.getInventory(), items, price, player, company, sign, transactionType);
     }
 
     private static boolean isAllowedForShift(boolean buyTransaction) {

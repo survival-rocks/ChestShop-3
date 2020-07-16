@@ -1,6 +1,7 @@
 package com.Acrobot.ChestShop.Commands;
 
 import com.Acrobot.ChestShop.Configuration.Messages;
+import me.justeli.survival.companies.storage.Company;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -50,6 +51,11 @@ public class Toggle implements CommandExecutor {
 
     public static boolean isIgnoring(UUID playerId) {
         return toggledPlayers.contains(playerId);
+    }
+
+    public static boolean isIgnoring(Company company)
+    {
+        return false; // todo
     }
 
     /**

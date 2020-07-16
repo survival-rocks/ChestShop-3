@@ -34,7 +34,7 @@ public class TaxModule implements Listener {
     private static BigDecimal getTaxAmount(BigDecimal price, float taxAmount) {
         return price.multiply(BigDecimal.valueOf(taxAmount)).divide(BigDecimal.valueOf(100), Properties.PRICE_PRECISION, BigDecimal.ROUND_HALF_UP);
     }
-
+/*
     @EventHandler(priority = EventPriority.LOW)
     public static void onCurrencyTransfer(CurrencyTransferEvent event) {
         if (event.wasHandled()) {
@@ -61,5 +61,5 @@ public class TaxModule implements Listener {
             event.setAmountSent(event.getAmountSent().subtract(getTaxAmount(event.getAmountSent(), taxAmount)));
             event.setAmountReceived(event.getAmountReceived().subtract(getTaxAmount(event.getAmountReceived(), taxAmount)));
         }
-    }
+    }*/
 }

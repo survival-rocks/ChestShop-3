@@ -9,9 +9,11 @@ import com.Acrobot.ChestShop.Events.ShopCreatedEvent;
 import com.Acrobot.ChestShop.Signs.ChestShopSign;
 import com.Acrobot.ChestShop.UUIDs.NameManager;
 import com.Acrobot.ChestShop.Utils.uBlock;
+import me.justeli.survival.companies.handlers.DistanceModule;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 
@@ -23,7 +25,7 @@ import static com.Acrobot.ChestShop.Signs.ChestShopSign.NAME_LINE;
  */
 public class SignCreate implements Listener {
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public static void onSignChange(SignChangeEvent event) {
         Block signBlock = event.getBlock();
 
@@ -42,12 +44,6 @@ public class SignCreate implements Listener {
         }
 
         if (!ChestShopSign.isValid(lines, true)) {
-            return;
-        }
-
-        if (!NameManager.canUseName(event.getPlayer(), OTHER_NAME_DESTROY, StringUtil.stripColourCodes(sign.getLine(NAME_LINE)))) {
-            event.setCancelled(true);
-            sign.update();
             return;
         }
 

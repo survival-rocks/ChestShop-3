@@ -2,6 +2,7 @@ package com.Acrobot.ChestShop.Events;
 
 import com.Acrobot.ChestShop.Database.Account;
 import com.Acrobot.ChestShop.UUIDs.NameManager;
+import me.justeli.survival.companies.storage.Company;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Sign;
@@ -27,7 +28,7 @@ public class PreTransactionEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
 
     private final Player client;
-    private Account ownerAccount;
+    private Company company;
 
     private final TransactionType transactionType;
     private final Sign sign;
@@ -41,7 +42,7 @@ public class PreTransactionEvent extends Event implements Cancellable {
 
     private TransactionOutcome transactionOutcome = TRANSACTION_SUCCESFUL;
 
-    public PreTransactionEvent(Inventory ownerInventory, Inventory clientInventory, ItemStack[] items, BigDecimal exactPrice, Player client, Account ownerAccount, Sign sign, TransactionType type) {
+    public PreTransactionEvent(Inventory ownerInventory, Inventory clientInventory, ItemStack[] items, BigDecimal exactPrice, Player client, Company company, Sign sign, TransactionType type) {
         this.ownerInventory = ownerInventory;
         this.clientInventory = (clientInventory == null ? client.getInventory() : clientInventory);
 
@@ -49,18 +50,10 @@ public class PreTransactionEvent extends Event implements Cancellable {
         this.exactPrice = exactPrice;
 
         this.client = client;
-        this.ownerAccount = ownerAccount;
+        this.company = company;
 
         this.sign = sign;
         this.transactionType = type;
-    }
-
-    /**
-     * @deprecated Use {@link #PreTransactionEvent(Inventory, Inventory, ItemStack[], BigDecimal, Player, Account, Sign, TransactionType)}
-     */
-    @Deprecated
-    public PreTransactionEvent(Inventory ownerInventory, Inventory clientInventory, ItemStack[] items, double price, Player client, Account ownerAccount, Sign sign, TransactionType type) {
-        this(ownerInventory, clientInventory, items, BigDecimal.valueOf(price), client, ownerAccount, sign, type);
     }
 
     /**
@@ -136,37 +129,17 @@ public class PreTransactionEvent extends Event implements Cancellable {
     /**
      * @return Account of the shop's owner
      */
-    public Account getOwnerAccount() {
-        return ownerAccount;
+    public Company getCompany() {
+        return company;
     }
 
     /**
      * Sets the shop's owner
      *
-     * @param ownerAccount Account of the shop owner
+     * @param company Account of the shop owner
      */
-    public void setOwnerAccount(Account ownerAccount) {
-        this.ownerAccount = ownerAccount;
-    }
-
-    /**
-     * @return Shop's owner
-     * @deprecated Use {@link #getOwnerAccount}
-     */
-    @Deprecated
-    public OfflinePlayer getOwner() {
-        return Bukkit.getOfflinePlayer(ownerAccount.getUuid());
-    }
-
-    /**
-     * Sets the shop's owner
-     *
-     * @param owner Shop owner
-     * @deprecated Use {@link #setOwnerAccount(Account)}
-     */
-    @Deprecated
-    public void setOwner(OfflinePlayer owner) {
-        this.ownerAccount = NameManager.getOrCreateAccount(owner);
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     /**

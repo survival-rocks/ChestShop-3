@@ -5,6 +5,7 @@ import com.Acrobot.ChestShop.ChestShop;
 import com.Acrobot.ChestShop.Events.ChestShopReloadEvent;
 import com.Acrobot.ChestShop.Events.PreTransactionEvent;
 import com.Acrobot.ChestShop.Permission;
+import com.Acrobot.ChestShop.Signs.ChestShopSign;
 import com.Acrobot.ChestShop.UUIDs.NameManager;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -53,10 +54,10 @@ public class DiscountModule implements Listener {
     public void onReload(ChestShopReloadEvent event) {
         load();
     }
-
+/*
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPreTransaction(PreTransactionEvent event) {
-        if (event.getTransactionType() != BUY || !NameManager.isAdminShop(event.getOwnerAccount().getUuid())) {
+        if (event.getTransactionType() != BUY || !ChestShopSign.isAdminShop(event.getSign())) {
             return;
         }
 
@@ -72,5 +73,5 @@ public class DiscountModule implements Listener {
                 return;
             }
         }
-    }
+    }*/
 }

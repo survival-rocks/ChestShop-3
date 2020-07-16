@@ -7,12 +7,16 @@ import com.Acrobot.ChestShop.Configuration.Messages;
 import com.Acrobot.ChestShop.Configuration.Properties;
 import com.Acrobot.ChestShop.Economy.Economy;
 import com.Acrobot.ChestShop.Events.TransactionEvent;
+import me.justeli.survival.companies.storage.Company;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+
+import java.util.UUID;
 
 /**
  * @author Acrobot
@@ -31,12 +35,11 @@ public class TransactionMessageSender implements Listener {
         Player player = event.getClient();
 
         if (Properties.SHOW_TRANSACTION_INFORMATION_CLIENT) {
-            sendMessage(player, event.getClient().getName(), Messages.YOU_BOUGHT_FROM_SHOP, event, "owner", event.getOwnerAccount().getName());
+            sendMessage(player, event.getClient().getName(), Messages.YOU_BOUGHT_FROM_SHOP, event, "owner", event.getCompany().getDisplayName());
         }
 
-        if (Properties.SHOW_TRANSACTION_INFORMATION_OWNER && !Toggle.isIgnoring(event.getOwnerAccount().getUuid())) {
-            Player owner = Bukkit.getPlayer(event.getOwnerAccount().getUuid());
-            sendMessage(owner, event.getOwnerAccount().getName(), Messages.SOMEBODY_BOUGHT_FROM_YOUR_SHOP, event, "buyer", player.getName());
+        if (Properties.SHOW_TRANSACTION_INFORMATION_OWNER && !Toggle.isIgnoring(event.getCompany())) {
+            sendMessage(event.getCompany(), event.getCompany().getDisplayName(), Messages.SOMEBODY_BOUGHT_FROM_YOUR_SHOP, event, "buyer", player.getName());
         }
     }
     
@@ -44,12 +47,22 @@ public class TransactionMessageSender implements Listener {
         Player player = event.getClient();
 
         if (Properties.SHOW_TRANSACTION_INFORMATION_CLIENT) {
-            sendMessage(player, event.getClient().getName(), Messages.YOU_SOLD_TO_SHOP, event, "buyer", event.getOwnerAccount().getName());
+            sendMessage(player, event.getClient().getName(), Messages.YOU_SOLD_TO_SHOP, event, "buyer", event.getCompany().getDisplayName());
         }
 
-        if (Properties.SHOW_TRANSACTION_INFORMATION_OWNER && !Toggle.isIgnoring(event.getOwnerAccount().getUuid())) {
-            Player owner = Bukkit.getPlayer(event.getOwnerAccount().getUuid());
-            sendMessage(owner, event.getOwnerAccount().getName(), Messages.SOMEBODY_SOLD_TO_YOUR_SHOP, event, "seller", player.getName());
+        if (Properties.SHOW_TRANSACTION_INFORMATION_OWNER && !Toggle.isIgnoring(event.getCompany())) {
+            sendMessage(event.getCompany(), event.getCompany().getDisplayName(), Messages.SOMEBODY_SOLD_TO_YOUR_SHOP, event, "seller", player.getName());
+        }
+    }
+
+    private static void sendMessage(Company company, String playerName, String rawMessage, TransactionEvent event, String... replacements) {
+        for (UUID uuid : company.getPrivateShareHolders())
+        {
+            OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+            if (player == null || !player.isOnline())
+                continue;
+
+            sendMessage(player.getPlayer(), playerName, rawMessage, event, replacements);
         }
     }
     

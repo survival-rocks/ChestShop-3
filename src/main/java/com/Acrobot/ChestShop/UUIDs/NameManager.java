@@ -15,6 +15,7 @@ import com.Acrobot.ChestShop.Signs.ChestShopSign;
 import com.j256.ormlite.dao.Dao;
 
 import com.j256.ormlite.stmt.SelectArg;
+import me.justeli.survival.companies.Companies;
 import me.justeli.survival.companies.storage.Company;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -377,8 +378,8 @@ public class NameManager implements Listener {
             return true;
         }
 
-        Company company = new Company(name);
-        if (!company.exists()) {
+        Company company = Companies.get(name);
+        if (company == null) {
             return false;
         }
 

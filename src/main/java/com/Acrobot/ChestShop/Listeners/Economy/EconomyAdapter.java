@@ -43,35 +43,46 @@ public abstract class EconomyAdapter implements Listener {
         }
 
         BigDecimal amountSent = event.getAmountSent();
-        CurrencySubtractEvent currencySubtractEvent = new CurrencySubtractEvent(amountSent, event.getSender(), event.getWorld());
-        if (!NameManager.isAdminShop(event.getSender())) {
-            ChestShop.callEvent(currencySubtractEvent);
-        } else {
-            currencySubtractEvent.setHandled(true);
+        boolean companyIsReceiver = event.isCompanyTheReceiver(); // getCustomer == getSender if true
+
+        if (companyIsReceiver)
+        {
+            CurrencySubtractEvent currencySubtractEvent = new CurrencySubtractEvent(amountSent, event.getCustomer(), event.getWorld());
+
+            if (!NameManager.isAdminShop(event.getCustomer())) {
+                ChestShop.callEvent(currencySubtractEvent);
+            } else {
+                currencySubtractEvent.setHandled(true);
+            }
+
+            if (!currencySubtractEvent.wasHandled()) {
+                return;
+            }
+
+            if (currencySubtractEvent.wasHandled())
+                event.setHandled(true);
+        }
+        else
+        {
+            event.getCompany().subtractCoins(amountSent.longValue());
         }
 
-        if (!currencySubtractEvent.wasHandled()) {
-            return;
-        }
+        BigDecimal amountReceived = event.getAmountReceived();
+        if (!companyIsReceiver)
+        {
+            CurrencyAddEvent currencyAddEvent = new CurrencyAddEvent(amountReceived, event.getCustomer(), event.getWorld());
+            if (!NameManager.isAdminShop(event.getCustomer())) {
+                ChestShop.callEvent(currencyAddEvent);
+            } else {
+                currencyAddEvent.setHandled(true);
+            }
 
-        BigDecimal amountReceived = event.getAmountReceived().subtract(amountSent.subtract(currencySubtractEvent.getAmount()));
-        CurrencyAddEvent currencyAddEvent = new CurrencyAddEvent(amountReceived, event.getReceiver(), event.getWorld());
-        if (!NameManager.isAdminShop(event.getReceiver())) {
-            ChestShop.callEvent(currencyAddEvent);
-        } else {
-            currencyAddEvent.setHandled(true);
+            if (currencyAddEvent.wasHandled())
+                event.setHandled(true);
         }
-
-        if (currencyAddEvent.wasHandled()) {
-            event.setHandled(true);
-        } else {
-            CurrencyAddEvent currencyResetEvent = new CurrencyAddEvent(
-                    currencySubtractEvent.getAmount(),
-                    event.getSender(),
-                    event.getWorld()
-            );
-            ChestShop.callEvent(currencyResetEvent);
+        else
+        {
+            event.getCompany().handleSale(amountReceived.longValue());
         }
     }
-
 }

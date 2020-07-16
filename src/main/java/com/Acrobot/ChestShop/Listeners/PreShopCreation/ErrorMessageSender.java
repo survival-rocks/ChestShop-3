@@ -23,6 +23,9 @@ public class ErrorMessageSender implements Listener {
             case UNKNOWN_COMPANY:
                 message = Messages.COMPANY_NOT_FOUND;
                 break;
+            case TOO_CLOSE_TO_OTHERS:
+                message = Messages.TOO_CLOSE_TO_OTHERS;
+                break;
             case NO_OWNING_COMPANIES:
                 message = Messages.NO_OWNING_COMPANIES;
                 break;

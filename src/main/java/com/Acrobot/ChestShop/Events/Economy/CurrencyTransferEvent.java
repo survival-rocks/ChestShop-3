@@ -1,5 +1,6 @@
 package com.Acrobot.ChestShop.Events.Economy;
 
+import me.justeli.survival.companies.storage.Company;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -21,29 +22,29 @@ public class CurrencyTransferEvent extends EconomicEvent {
 
     private final Player initiator;
 
-    private UUID partner;
+    private Company company;
 
     private Direction direction;
 
-    public CurrencyTransferEvent(BigDecimal amount, Player initiator, UUID partner, Direction direction) {
-        this(amount, amount, initiator, partner, direction);
+    public CurrencyTransferEvent(BigDecimal amount, Player initiator, Company company, Direction direction) {
+        this(amount, amount, initiator, company, direction);
     }
 
-    public CurrencyTransferEvent(BigDecimal amountSent, BigDecimal amountReceived, Player initiator, UUID partner, Direction direction) {
+    public CurrencyTransferEvent(BigDecimal amountSent, BigDecimal amountReceived, Player initiator, Company company, Direction direction) {
         this.amountSent = amountSent;
         this.amountReceived = amountReceived;
         this.initiator = initiator;
 
-        this.partner = partner;
+        this.company = company;
         this.direction = direction;
     }
 
     /**
-     * @deprecated Use {{@link #CurrencyTransferEvent(BigDecimal, Player, UUID, Direction)}
+     * @deprecated Use {{@link #CurrencyTransferEvent(BigDecimal, Player, Company, Direction)}
      */
     @Deprecated
-    public CurrencyTransferEvent(double amount, Player initiator, UUID partner, Direction direction) {
-        this(BigDecimal.valueOf(amount), initiator, partner, direction);
+    public CurrencyTransferEvent(double amount, Player initiator, Company company, Direction direction) {
+        this(BigDecimal.valueOf(amount), initiator, company, direction);
     }
 
     /**
@@ -162,8 +163,8 @@ public class CurrencyTransferEvent extends EconomicEvent {
     /**
      * @return the partner of this transaction
      */
-    public UUID getPartner() {
-        return partner;
+    public Company getCompany() {
+        return company;
     }
 
     /**
@@ -176,16 +177,27 @@ public class CurrencyTransferEvent extends EconomicEvent {
     /**
      * @return Sender of the money
      */
-    public UUID getSender() {
-        return direction == Direction.PARTNER ? initiator.getUniqueId() : partner;
+
+    public boolean isCompanyTheReceiver ()
+    {
+        return direction == Direction.PARTNER;
     }
 
     /**
      * @return Receiver of the money
      */
+    public UUID getCustomer() {
+        return initiator.getUniqueId();
+    }
+
+    /*
+    public UUID getSender() {
+        return direction == Direction.PARTNER ? initiator.getUniqueId() : partner;
+    }
+
     public UUID getReceiver() {
         return direction == Direction.PARTNER ? partner : initiator.getUniqueId();
-    }
+    }*/
 
     public HandlerList getHandlers() {
         return handlers;

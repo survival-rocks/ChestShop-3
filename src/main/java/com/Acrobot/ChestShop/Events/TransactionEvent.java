@@ -1,6 +1,7 @@
 package com.Acrobot.ChestShop.Events;
 
 import com.Acrobot.ChestShop.Database.Account;
+import me.justeli.survival.companies.storage.Company;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Sign;
@@ -26,7 +27,7 @@ public class TransactionEvent extends Event implements Cancellable {
     private final Inventory clientInventory;
 
     private final Player client;
-    private final Account ownerAccount;
+    private final Company company;
 
     private final ItemStack[] stock;
     private final BigDecimal exactPrice;
@@ -42,7 +43,7 @@ public class TransactionEvent extends Event implements Cancellable {
         this.clientInventory = event.getClientInventory();
 
         this.client = event.getClient();
-        this.ownerAccount = event.getOwnerAccount();
+        this.company = event.getCompany();
 
         this.stock = event.getStock();
         this.exactPrice = event.getExactPrice();
@@ -50,14 +51,14 @@ public class TransactionEvent extends Event implements Cancellable {
         this.sign = sign;
     }
 
-    public TransactionEvent(TransactionType type, Inventory ownerInventory, Inventory clientInventory, Player client, Account ownerAccount, ItemStack[] stock, BigDecimal exactPrice, Sign sign) {
+    public TransactionEvent(TransactionType type, Inventory ownerInventory, Inventory clientInventory, Player client, Company company, ItemStack[] stock, BigDecimal exactPrice, Sign sign) {
         this.type = type;
 
         this.ownerInventory = ownerInventory;
         this.clientInventory = clientInventory;
 
         this.client = client;
-        this.ownerAccount = ownerAccount;
+        this.company = company;
 
         this.stock = stock;
         this.exactPrice = exactPrice;
@@ -66,11 +67,11 @@ public class TransactionEvent extends Event implements Cancellable {
     }
 
     /**
-     * @deprecated Use {@link #TransactionEvent(TransactionType, Inventory, Inventory, Player, Account, ItemStack[], BigDecimal, Sign)}
+     * @deprecated Use {@link #TransactionEvent(TransactionType, Inventory, Inventory, Player, Company, ItemStack[], BigDecimal, Sign)}
      */
     @Deprecated
-    public TransactionEvent(TransactionType type, Inventory ownerInventory, Inventory clientInventory, Player client, Account ownerAccount, ItemStack[] stock, double price, Sign sign) {
-        this(type, ownerInventory, clientInventory, client, ownerAccount, stock, BigDecimal.valueOf(price), sign);
+    public TransactionEvent(TransactionType type, Inventory ownerInventory, Inventory clientInventory, Player client, Company company, ItemStack[] stock, double price, Sign sign) {
+        this(type, ownerInventory, clientInventory, client, company, stock, BigDecimal.valueOf(price), sign);
     }
 
     /**
@@ -104,8 +105,8 @@ public class TransactionEvent extends Event implements Cancellable {
     /**
      * @return Account of the shop's owner
      */
-    public Account getOwnerAccount() {
-        return ownerAccount;
+    public Company getCompany() {
+        return company;
     }
 
     /**

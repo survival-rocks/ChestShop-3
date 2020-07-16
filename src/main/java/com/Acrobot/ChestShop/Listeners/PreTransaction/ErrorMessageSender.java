@@ -5,13 +5,14 @@ import com.Acrobot.ChestShop.ChestShop;
 import com.Acrobot.ChestShop.Commands.Toggle;
 import com.Acrobot.ChestShop.Configuration.Messages;
 import com.Acrobot.ChestShop.Configuration.Properties;
-import com.Acrobot.ChestShop.Database.Account;
 import com.Acrobot.ChestShop.Economy.Economy;
 import com.Acrobot.ChestShop.Events.PreTransactionEvent;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
+import me.justeli.survival.companies.storage.Company;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -30,7 +31,7 @@ import static com.Acrobot.ChestShop.Configuration.Messages.NOT_ENOUGH_SPACE_IN_Y
  */
 public class ErrorMessageSender implements Listener {
 
-    private static Table<UUID, String, Long> notificationCooldowns = HashBasedTable.create();
+    private static Table<String, String, Long> notificationCooldowns = HashBasedTable.create();
 
     @EventHandler(priority = EventPriority.MONITOR)
     public static void onQuit(PlayerQuitEvent event) {
@@ -64,7 +65,7 @@ public class ErrorMessageSender implements Listener {
                 message = Messages.NOT_ENOUGH_MONEY_SHOP;
                 break;
             case NOT_ENOUGH_SPACE_IN_CHEST:
-                if (Properties.SHOW_MESSAGE_FULL_SHOP && !Properties.CSTOGGLE_TOGGLES_FULL_SHOP || !Toggle.isIgnoring(event.getOwnerAccount().getUuid())) {
+                if (Properties.SHOW_MESSAGE_FULL_SHOP && !Properties.CSTOGGLE_TOGGLES_FULL_SHOP || !Toggle.isIgnoring(event.getCompany())) {
                     Location loc = event.getSign().getLocation();
                     String messageNotEnoughSpace = Messages.prefix(NOT_ENOUGH_SPACE_IN_YOUR_SHOP)
                             .replace("%price", Economy.formatBalance(event.getExactPrice()))
@@ -73,7 +74,7 @@ public class ErrorMessageSender implements Listener {
                             .replace("%x", String.valueOf(loc.getBlockX()))
                             .replace("%y", String.valueOf(loc.getBlockY()))
                             .replace("%z", String.valueOf(loc.getBlockZ()));
-                    sendMessageToOwner(event.getOwnerAccount(), messageNotEnoughSpace, event.getStock());
+                    sendMessageToOwner(event.getCompany(), messageNotEnoughSpace, event.getStock());
                 }
                 message = Messages.NOT_ENOUGH_SPACE_IN_CHEST;
                 break;
@@ -84,7 +85,7 @@ public class ErrorMessageSender implements Listener {
                 message = Messages.NOT_ENOUGH_ITEMS_TO_SELL;
                 break;
             case NOT_ENOUGH_STOCK_IN_CHEST:
-                if (Properties.SHOW_MESSAGE_OUT_OF_STOCK && !Properties.CSTOGGLE_TOGGLES_OUT_OF_STOCK || !Toggle.isIgnoring(event.getOwnerAccount().getUuid())) {
+                if (Properties.SHOW_MESSAGE_OUT_OF_STOCK && !Properties.CSTOGGLE_TOGGLES_OUT_OF_STOCK || !Toggle.isIgnoring(event.getCompany())) {
                     Location loc = event.getSign().getLocation();
                     String messageOutOfStock = Messages.prefix(NOT_ENOUGH_STOCK_IN_YOUR_SHOP)
                             .replace("%price", Economy.formatBalance(event.getExactPrice()))
@@ -93,7 +94,7 @@ public class ErrorMessageSender implements Listener {
                             .replace("%x", String.valueOf(loc.getBlockX()))
                             .replace("%y", String.valueOf(loc.getBlockY()))
                             .replace("%z", String.valueOf(loc.getBlockZ()));
-                    sendMessageToOwner(event.getOwnerAccount(), messageOutOfStock, event.getStock());
+                    sendMessageToOwner(event.getCompany(), messageOutOfStock, event.getStock());
                 }
                 message = Messages.NOT_ENOUGH_STOCK;
                 break;
@@ -102,7 +103,7 @@ public class ErrorMessageSender implements Listener {
                 break;
             case SHOP_DEPOSIT_FAILED:
                 String messageDepositFailed = Messages.prefix(CLIENT_DEPOSIT_FAILED);
-                sendMessageToOwner(event.getOwnerAccount(), messageDepositFailed);
+                sendMessageToOwner(event.getCompany(), messageDepositFailed);
                 message = Messages.SHOP_DEPOSIT_FAILED;
                 break;
             case SHOP_IS_RESTRICTED:
@@ -120,27 +121,33 @@ public class ErrorMessageSender implements Listener {
         }
     }
 
-    private static void sendMessageToOwner(Account ownerAccount, String message, ItemStack... stock) {
-        Player player = Bukkit.getPlayer(ownerAccount.getUuid());
-        if (player != null || Properties.BUNGEECORD_MESSAGES) {
-            message = message.replace("%material", "%item");
-            String replacedMessage = message.replace("%item", MaterialUtil.getItemList(stock));
+    private static void sendMessageToOwner(Company company, String message, ItemStack... stock) {
+        for (UUID uuid : company.getPrivateShareHolders())
+        {
+            OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+            if (player == null)
+                continue;
 
-            if (Properties.NOTIFICATION_MESSAGE_COOLDOWN > 0) {
-                Long last = notificationCooldowns.get(ownerAccount.getUuid(), replacedMessage);
-                if (last != null && last + Properties.NOTIFICATION_MESSAGE_COOLDOWN * 1000 > System.currentTimeMillis()) {
-                    return;
-                }
-                notificationCooldowns.put(ownerAccount.getUuid(), replacedMessage, System.currentTimeMillis());
-            }
+            if (player.isOnline() || Properties.BUNGEECORD_MESSAGES) {
+                message = message.replace("%material", "%item");
+                String replacedMessage = message.replace("%item", MaterialUtil.getItemList(stock));
 
-            if (player != null) {
-                if (Properties.SHOWITEM_MESSAGE && MaterialUtil.Show.sendMessage(player, message, stock)) {
-                    return;
+                if (Properties.NOTIFICATION_MESSAGE_COOLDOWN > 0) {
+                    Long last = notificationCooldowns.get(company.getDisplayName(), replacedMessage);
+                    if (last != null && last + Properties.NOTIFICATION_MESSAGE_COOLDOWN * 1000 > System.currentTimeMillis()) {
+                        return;
+                    }
+                    notificationCooldowns.put(company.getDisplayName(), replacedMessage, System.currentTimeMillis());
                 }
-                player.sendMessage(replacedMessage);
-            } else {
-                ChestShop.sendBungeeMessage(ownerAccount.getName(), replacedMessage);
+
+                if (player.isOnline()) {
+                    if (Properties.SHOWITEM_MESSAGE && MaterialUtil.Show.sendMessage(player.getPlayer(), message, stock)) {
+                        return;
+                    }
+                    player.getPlayer().sendMessage(replacedMessage);
+                } else {
+                    //ChestShop.sendBungeeMessage(ownerAccount.getName(), replacedMessage);
+                }
             }
         }
     }

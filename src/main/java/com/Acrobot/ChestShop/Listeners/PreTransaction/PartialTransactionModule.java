@@ -9,6 +9,7 @@ import com.Acrobot.ChestShop.Events.Economy.CurrencyAmountEvent;
 import com.Acrobot.ChestShop.Events.Economy.CurrencyCheckEvent;
 import com.Acrobot.ChestShop.Events.Economy.CurrencyHoldEvent;
 import com.Acrobot.ChestShop.Events.PreTransactionEvent;
+import me.justeli.survival.companies.storage.Company;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -87,15 +88,6 @@ public class PartialTransactionModule implements Listener {
             event.setStock(itemsFit);
             event.setExactPrice(pricePerItem.multiply(BigDecimal.valueOf(possessedItemCount)).setScale(Properties.PRICE_PRECISION, BigDecimal.ROUND_HALF_UP));
         }
-
-        UUID seller = event.getOwnerAccount().getUuid();
-
-        CurrencyHoldEvent currencyHoldEvent = new CurrencyHoldEvent(event.getExactPrice(), seller, client.getWorld());
-        ChestShop.callEvent(currencyHoldEvent);
-
-        if (!currencyHoldEvent.canHold()) {
-            event.setCancelled(SHOP_DEPOSIT_FAILED);
-        }
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -105,21 +97,16 @@ public class PartialTransactionModule implements Listener {
         }
 
         Player client = event.getClient();
-        UUID owner = event.getOwnerAccount().getUuid();
+        Company company = event.getCompany();
 
         BigDecimal pricePerItem = event.getExactPrice().divide(BigDecimal.valueOf(InventoryUtil.countItems(event.getStock())), MathContext.DECIMAL128);
 
 
         if (Economy.isOwnerEconomicallyActive(event.getOwnerInventory())) {
-            CurrencyCheckEvent currencyCheckEvent = new CurrencyCheckEvent(event.getExactPrice(), owner, client.getWorld());
-            ChestShop.callEvent(currencyCheckEvent);
+            if (!company.hasEnoughCoins(event.getExactPrice().longValue())) {
 
-            if (!currencyCheckEvent.hasEnough()) {
-                CurrencyAmountEvent currencyAmountEvent = new CurrencyAmountEvent(owner, client.getWorld());
-                ChestShop.callEvent(currencyAmountEvent);
-
-                BigDecimal walletMoney = currencyAmountEvent.getAmount();
-                int amountAffordable = getAmountOfAffordableItems(walletMoney, pricePerItem);
+                long walletMoney = company.getBalance();
+                int amountAffordable = getAmountOfAffordableItems(new BigDecimal(walletMoney), pricePerItem);
 
                 if (amountAffordable < 1) {
                     event.setCancelled(SHOP_DOES_NOT_HAVE_ENOUGH_MONEY);

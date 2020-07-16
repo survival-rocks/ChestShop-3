@@ -59,7 +59,7 @@ public class ServerAccountCorrector implements Listener {
 
         event.setHandled(currencySubtractEvent.wasHandled());
     }
-
+/*
     @EventHandler(priority = EventPriority.LOWEST)
     public static void onCurrencyTransfer(CurrencyTransferEvent event) {
         UUID partner = event.getPartner();
@@ -85,7 +85,7 @@ public class ServerAccountCorrector implements Listener {
         ChestShop.callEvent(currencyTransferEvent);
         event.setHandled(currencyTransferEvent.wasHandled());
     }
-
+*/
     @EventHandler(priority = EventPriority.LOWEST)
     public static void onCurrencyCheck(CurrencyCheckEvent event) {
         UUID target = event.getAccount();

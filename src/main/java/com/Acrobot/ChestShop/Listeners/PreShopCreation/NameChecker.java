@@ -1,6 +1,7 @@
 package com.Acrobot.ChestShop.Listeners.PreShopCreation;
 
 import com.Acrobot.ChestShop.Events.PreShopCreationEvent;
+import me.justeli.survival.companies.Companies;
 import me.justeli.survival.companies.storage.Company;
 import me.justeli.survival.companies.storage.ShareHolder;
 import org.bukkit.entity.Player;
@@ -39,9 +40,16 @@ public class NameChecker
         Player player = event.getPlayer();
 
         Company company = event.getCompany();
-        if (company == null && name.isEmpty())
+        ShareHolder shareHolder = Companies.shareHolder(player.getUniqueId());
+
+        if (shareHolder == null)
         {
-            ShareHolder shareHolder = new ShareHolder(player.getUniqueId());
+            event.setOutcome(NO_OWNING_COMPANIES);
+            return;
+        }
+
+        else if (company == null && name.isEmpty())
+        {
             company = shareHolder.getOwnedCompany();
 
             if (company == null)
@@ -58,13 +66,13 @@ public class NameChecker
 
         else if (company == null)
         {
-            company = new Company(name);
-            if (!company.exists() && !name.equalsIgnoreCase(player.getName()))
+            company = Companies.get(name);
+            if (company == null && !name.equalsIgnoreCase(player.getName()))
             {
                 event.setOutcome(UNKNOWN_COMPANY);
                 return;
             }
-            else if (!company.exists() && name.equalsIgnoreCase(player.getName()))
+            else if (company == null && name.equalsIgnoreCase(player.getName()))
             {
                 event.setOutcome(CREATE_VIA_COMPANY);
                 return;

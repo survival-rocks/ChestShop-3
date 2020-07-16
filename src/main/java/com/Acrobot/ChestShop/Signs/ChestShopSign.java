@@ -10,6 +10,7 @@ import com.Acrobot.ChestShop.Events.AccountQueryEvent;
 import com.Acrobot.ChestShop.Permission;
 import com.Acrobot.ChestShop.UUIDs.NameManager;
 import com.Acrobot.ChestShop.Utils.uBlock;
+import me.justeli.survival.companies.Companies;
 import me.justeli.survival.companies.storage.Company;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -38,7 +39,7 @@ public class ChestShopSign {//
     {
         return new Pattern[]
             {
-                Pattern.compile("^?[\\w -.:]*$"),
+                Pattern.compile("^?[ß-öø-ü\\w -.:]*$"),
                 Pattern.compile("^[1-9][0-9]{0,5}$"),
                 Pattern.compile(creation? "(?i)^([\\dbs :]+)$" : "(?i)^(§afree|[\\d§ac¢ :]+)$"),
                 Pattern.compile("^(§l\\?|[\\w ?#:-])+$")
@@ -47,7 +48,7 @@ public class ChestShopSign {//
     public static final String AUTOFILL_CODE = "?";
 
     public static boolean isAdminShop(Inventory ownerInventory) {
-        return ownerInventory instanceof AdminInventory;
+        return false;
     }
 
     public static boolean isAdminShop(String owner) {
@@ -147,8 +148,8 @@ public class ChestShopSign {//
         String name = sign.getLine(NAME_LINE);
         if (name == null || name.isEmpty()) return false;
 
-        Company company = new Company(name);
-        if (!company.exists())
+        Company company = Companies.get(name);
+        if (company == null)
             return false;
 
         return company.getPrivateShareHolders().contains(player.getUniqueId());

@@ -195,6 +195,7 @@ public class PreShopCreationEvent extends Event implements Cancellable {
         NO_PERMISSION,
         NO_PERMISSION_FOR_TERRAIN,
         NO_PERMISSION_FOR_CHEST,
+        TOO_CLOSE_TO_OTHERS,
 
         NOT_ENOUGH_MONEY,
         NO_OWNING_COMPANIES,
