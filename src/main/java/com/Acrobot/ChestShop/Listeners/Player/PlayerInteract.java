@@ -102,6 +102,11 @@ public class PlayerInteract implements Listener {
                     String[] lines = sign.getLines();
                     lines[ITEM_LINE] = itemCode;
 
+                    lines[PRICE_LINE] = lines[PRICE_LINE]
+                            .replace("¢", "")
+                            .replace(ChatColor.GREEN.toString(), "B")
+                            .replace(ChatColor.RED.toString(), "S");
+
                     SignChangeEvent changeEvent = new SignChangeEvent(block, player, lines);
                     com.Acrobot.ChestShop.ChestShop.callEvent(changeEvent);
                     if (!changeEvent.isCancelled()) {

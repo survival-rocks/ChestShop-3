@@ -47,11 +47,11 @@ public class Messages { //
 
     @PrecededBySpace
     public static String NOT_ENOUGH_STOCK = "This shop is out of stock.";
-    public static String NOT_ENOUGH_STOCK_IN_YOUR_SHOP = "%price %item&7 shop at &r%world/%x/%y/%z&7 is out of stock. (%buyer tried to buy)";
+    public static String NOT_ENOUGH_STOCK_IN_YOUR_SHOP = "Item %item for %price at %world/%x/%y/%z is out of stock. (%buyer tried to buy)";
 
     @PrecededBySpace
     public static String YOU_BOUGHT_FROM_SHOP = "You bought %item from %owner for %price.";
-    public static String SOMEBODY_BOUGHT_FROM_YOUR_SHOP = "%buyer bought %item for %price from your shop at %world/%x/%y/%z.";
+    public static String SOMEBODY_BOUGHT_FROM_YOUR_SHOP = "Sold %item for %price to %buyer at %world/%x/%y/%z.";
 
     @PrecededBySpace
     public static String YOU_SOLD_TO_SHOP = "You sold %item to %buyer for %price.";
@@ -89,8 +89,8 @@ public class Messages { //
 
     @PrecededBySpace
     public static String COMPANY_NOT_FOUND = "That company was not found.";
-    public static String NO_OWNING_COMPANIES = "You do not own any company. Please create a company with '/company create (name)' before you create chest shops.";
-    public static String CREATE_VIA_COMPANY = "Please create a company with '/company create (name)' before you create chest shops.";
+    public static String NO_OWNING_COMPANIES = "You do not own any company. Please create a company with '/create-company (name)' before you create chest shops.";
+    public static String CREATE_VIA_COMPANY = "Please create a company with '/create-company (name)' before you create chest shops.";
     public static String NOT_PART_OF_COMPANY = "You do not own any private shares in that company.";
     public static String NO_PERMISSION = "You don't have permissions to do that.";
     public static String INCORRECT_ITEM_ID = "You have specified an invalid item id.";

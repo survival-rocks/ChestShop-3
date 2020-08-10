@@ -8,6 +8,9 @@ import com.Acrobot.ChestShop.Events.MaterialParseEvent;
 import com.google.common.collect.ImmutableMap;
 import de.themoep.ShowItem.api.ShowItem;
 import info.somethingodd.OddItem.OddItem;
+import me.justeli.chestshop.FormatMessage;
+import me.justeli.common.api.item.HoverItem;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -24,6 +27,7 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.nodes.Tag;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -521,39 +525,18 @@ public class MaterialUtil {
          * @param stock   The items in stock
          */
         public static boolean sendMessage(Player player, String message, ItemStack[] stock) {
-            if (showItem == null) {
+            stock = InventoryUtil.mergeSimilarStacks(stock);
+
+            if (stock.length != 1)
+            {
+                System.out.println("returned false sending hoverable transaction");
                 return false;
             }
 
-            List<String> itemJson = new ArrayList<>();
-            for (ItemStack item : InventoryUtil.mergeSimilarStacks(stock)) {
-                try {
-                    itemJson.add(showItem.getItemConverter().createComponent(item, Level.FINE).toJsonString(player));
-                } catch (Exception e) {
-                    ChestShop.getPlugin().getLogger().log(Level.WARNING, "Error while trying to send message '" + message + "' to player " + player.getName() + ": " + e.getMessage());
-                    return false;
-                }
-            }
+            ItemStack item = stock[0].clone();
+            item.setAmount(Arrays.stream(stock).mapToInt(ItemStack::getAmount).sum());
 
-            String joinedItemJson = itemJson.stream().collect(Collectors.joining("," + new JSONObject(ImmutableMap.of("text", " ")).toJSONString() + ", "));
-
-            String prevColor = "";
-            List<String> parts = new ArrayList<>();
-            for (String s : message.split("%item")) {
-                parts.add(new JSONObject(ImmutableMap.of("text", prevColor + s)).toJSONString());
-                prevColor = ChatColor.getLastColors(s);
-            }
-
-            String messageJsonString = String.join("," + joinedItemJson + ",", parts);
-
-            while (messageJsonString.startsWith(",")) {
-                messageJsonString = messageJsonString.substring(1);
-            }
-            while (messageJsonString.endsWith(",")) {
-                messageJsonString = messageJsonString.substring(0, messageJsonString.length() - 1);
-            }
-
-            showItem.tellRaw(player, messageJsonString);
+            player.spigot().sendMessage(FormatMessage.transaction(message, item));
             return true;
         }
     }

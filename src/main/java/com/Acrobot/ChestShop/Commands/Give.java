@@ -5,6 +5,9 @@ import com.Acrobot.Breeze.Utils.MaterialUtil;
 import com.Acrobot.Breeze.Utils.NumberUtil;
 import com.Acrobot.ChestShop.Configuration.Messages;
 import com.Acrobot.ChestShop.Events.ItemParseEvent;
+import me.justeli.chestshop.FormatMessage;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -71,9 +74,11 @@ public class Give implements CommandExecutor {
         item.setAmount(quantity);
         InventoryUtil.add(item, receiver.getInventory());
 
-        sender.sendMessage(Messages.prefix(Messages.ITEM_GIVEN
-                .replace("%item", MaterialUtil.getName(item))
-                .replace("%player", receiver.getName())));
+        if (!(sender instanceof Player))
+            return true;
+
+        TextComponent message = FormatMessage.transaction(Messages.prefix(Messages.ITEM_GIVEN.replace("%player", receiver.getName())), item);
+        sender.spigot().sendMessage(message);
 
         return true;
     }
