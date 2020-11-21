@@ -9,6 +9,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
+import java.util.Set;
+
 import static com.Acrobot.ChestShop.Events.PreShopCreationEvent.CreationOutcome.CREATE_VIA_COMPANY;
 import static com.Acrobot.ChestShop.Events.PreShopCreationEvent.CreationOutcome.NOT_PART_OF_COMPANY;
 import static com.Acrobot.ChestShop.Events.PreShopCreationEvent.CreationOutcome.NO_OWNING_COMPANIES;
@@ -50,7 +52,8 @@ public class NameChecker
 
         else if (company == null && name.isEmpty())
         {
-            company = shareHolder.getOwnedCompany();
+            Set<Company> owns = shareHolder.getOwnedCompanies();
+            company = owns == null || owns.size() == 0? null : owns.stream().findFirst().get();
 
             if (company == null)
             {

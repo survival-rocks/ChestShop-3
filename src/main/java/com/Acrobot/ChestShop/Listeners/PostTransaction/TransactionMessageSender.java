@@ -7,16 +7,28 @@ import com.Acrobot.ChestShop.Configuration.Messages;
 import com.Acrobot.ChestShop.Configuration.Properties;
 import com.Acrobot.ChestShop.Economy.Economy;
 import com.Acrobot.ChestShop.Events.TransactionEvent;
+import me.justeli.api.wide.Convert;
+import me.justeli.api.wide.Text;
+import me.justeli.chestshop.DelayedMessage;
+import me.justeli.chestshop.DelayedNotificationEvent;
 import me.justeli.survival.companies.storage.Company;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
+
+import static com.Acrobot.ChestShop.Signs.ChestShopSign.ITEM_LINE;
 
 /**
  * @author Acrobot
@@ -31,6 +43,31 @@ public class TransactionMessageSender implements Listener {
         }
     }
 
+    @EventHandler
+    public void delayed (DelayedNotificationEvent event)
+    {
+        Text notify = new Text().primary("Sales from").variable(event.getCompany().getDisplayName()).primary("in the past minute:");
+        List<Text> messages = new ArrayList<>();
+
+        for (DelayedMessage message : event.getMessages())
+        {
+            messages.add(new Text().primary("- Sold").variable(message.getAmount()).primary("of").item(message.getItem()).primary("for")
+                    .coins(message.getPricePaid()).primary("to").variable(Convert.listToSentence(message.getBuyerNames().toArray(new String[0]))));
+        }
+
+        for (Player player : event.getCompany().getOnlinePrivateShareHolders())
+        {
+            if (event.getMessages().size() == 0)
+                continue;
+
+            notify.chatServer(player);
+            messages.forEach(message -> message.chatServer(player));
+        }
+    }
+
+    // String = raw company name
+    private final static HashMap<String, DelayedNotificationEvent> cachedNotification = new HashMap<>();
+
     protected static void sendBuyMessage(TransactionEvent event) {
         Player player = event.getClient();
 
@@ -38,8 +75,44 @@ public class TransactionMessageSender implements Listener {
             sendMessage(player, event.getClient().getName(), Messages.YOU_BOUGHT_FROM_SHOP, event, "owner", event.getCompany().getDisplayName());
         }
 
-        if (Properties.SHOW_TRANSACTION_INFORMATION_OWNER && !Toggle.isIgnoring(event.getCompany())) {
+        // custom part
+        /*
+        if (Properties.SHOW_TRANSACTION_INFORMATION_OWNER && !Toggle.isIgnoring(event.getCompany()))
+        {
             sendMessage(event.getCompany(), event.getCompany().getDisplayName(), Messages.SOMEBODY_BOUGHT_FROM_YOUR_SHOP, event, "buyer", player.getName());
+        }
+         */
+
+        ItemStack item = event.getStock()[0].clone();
+        int amount = Arrays.stream(event.getStock()).mapToInt(ItemStack::getAmount).sum();
+
+        DelayedMessage message = new DelayedMessage(player.getName(), amount, item, event.getSign().getLine(ITEM_LINE), event.getExactPrice().longValue());
+
+        if (!cachedNotification.containsKey(event.getCompany().getRawName()))
+        {
+            cachedNotification.put(event.getCompany().getRawName(), new DelayedNotificationEvent(message, event.getCompany()));
+
+            Bukkit.getScheduler().runTaskLater(ChestShop.getPlugin(), () ->
+            {
+                Bukkit.getPluginManager().callEvent(cachedNotification.get(event.getCompany().getRawName()));
+                cachedNotification.remove(event.getCompany().getRawName());
+            }, 1200);
+        }
+        else
+        {
+            DelayedNotificationEvent delayed = cachedNotification.get(event.getCompany().getRawName());
+            for (DelayedMessage existing : delayed.getMessages())
+            {
+                if (existing.getItem().equals(item))
+                {
+                    existing.addAmount(amount);
+                    existing.addBuyerName(player.getName());
+                    existing.addPricePaid(event.getExactPrice().longValue());
+                    return;
+                }
+            }
+
+            delayed.getMessages().add(message);
         }
     }
     

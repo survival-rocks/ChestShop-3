@@ -1,10 +1,6 @@
 package com.Acrobot.ChestShop.Events;
 
-import com.Acrobot.ChestShop.Database.Account;
-import com.Acrobot.ChestShop.UUIDs.NameManager;
 import me.justeli.survival.companies.storage.Company;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
