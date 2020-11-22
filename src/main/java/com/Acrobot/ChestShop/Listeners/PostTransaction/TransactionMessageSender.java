@@ -14,7 +14,6 @@ import me.justeli.chestshop.DelayedNotificationEvent;
 import me.justeli.survival.companies.storage.Company;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -103,7 +102,7 @@ public class TransactionMessageSender implements Listener {
             DelayedNotificationEvent delayed = cachedNotification.get(event.getCompany().getRawName());
             for (DelayedMessage existing : delayed.getMessages())
             {
-                if (existing.getItem().equals(item))
+                if (existing.getItemCode().equals(event.getSign().getLine(ITEM_LINE)))
                 {
                     existing.addAmount(amount);
                     existing.addBuyerName(player.getName());
