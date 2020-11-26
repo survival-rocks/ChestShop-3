@@ -8,13 +8,6 @@ softdepend: [Vault, Reserve, LWC, Lockette, Deadbolt, OddItem, WorldGuard, Grief
 api-version: '1.13'
 
 commands:
-  iteminfo:
-    aliases: [iinfo]
-    description: Lists item id and names
-    usage: |
-           /<command> §2(what's the item in hand?)
-           /<command> §7log§f §2(what's the item ID of §7LOG§2?)
-
   csGive:
     description: Gives an item to the appropriate player
     usage: /<command> <item code> (amount) (player)
@@ -25,9 +18,9 @@ commands:
   csMetrics:
     description: Shows ChestShop's metrics
     usage: /<command>
-  cstoggle:
-    description: Toggle messages to the owner of a shop
-    usage: /<command>
+#  cstoggle:
+#    description: Toggle messages to the owner of a shop
+#    usage: /<command>
   csaccess:
     description: Allows trading at shops that you have access to
     usage: /<command>
