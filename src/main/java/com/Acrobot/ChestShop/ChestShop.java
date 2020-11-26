@@ -119,11 +119,11 @@ public class ChestShop extends JavaPlugin {
             return;
         }
 
-        registerCommand("iteminfo", new ItemInfo(), Permission.ITEMINFO);
+        //registerCommand("iteminfo", new ItemInfo(), Permission.ITEMINFO);
         registerCommand("csVersion", new Version(), Permission.ADMIN);
         registerCommand("csMetrics", new com.Acrobot.ChestShop.Commands.Metrics(), Permission.ADMIN);
         registerCommand("csGive", new Give(), Permission.ADMIN);
-        registerCommand("cstoggle", new Toggle(), Permission.NOTIFY_TOGGLE);
+        //registerCommand("cstoggle", new Toggle(), Permission.NOTIFY_TOGGLE);
         registerCommand("csaccess", new AccessToggle(), Permission.ACCESS_TOGGLE);
 
         loadConfig();
