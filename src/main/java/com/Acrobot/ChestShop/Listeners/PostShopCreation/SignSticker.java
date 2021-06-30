@@ -52,11 +52,11 @@ public class SignSticker implements Listener {
         }
 
 
-        signBlock.setType(Material.WALL_SIGN);
+        signBlock.setType(Material.OAK_WALL_SIGN);
 
         org.bukkit.block.Sign sign = (org.bukkit.block.Sign) signBlock.getState();
 
-        WallSign signMaterial = (WallSign) Bukkit.createBlockData(Material.WALL_SIGN);
+        WallSign signMaterial = (WallSign) Bukkit.createBlockData(Material.OAK_WALL_SIGN);
         signMaterial.setFacing(shopBlockFace.getOppositeFace());
         sign.setBlockData(signMaterial);
 

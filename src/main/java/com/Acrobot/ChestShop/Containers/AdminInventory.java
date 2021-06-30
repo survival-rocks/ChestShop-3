@@ -14,6 +14,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Acrobot
@@ -40,11 +41,6 @@ public class AdminInventory implements Inventory {
     @Override
     public void setMaxStackSize(int i) {
         maxStackSize = i;
-    }
-
-    @Override
-    public String getName() {
-        return "Admin inventory";
     }
 
     @Override
@@ -191,6 +187,12 @@ public class AdminInventory implements Inventory {
     }
 
     @Override
+    public boolean isEmpty ()
+    {
+        return false;
+    }
+
+    @Override
     public void remove(Material material) {
     }
 
@@ -207,13 +209,14 @@ public class AdminInventory implements Inventory {
     }
 
     @Override
-    public List<HumanEntity> getViewers() {
-        return new ArrayList<>();
+    public int close ()
+    {
+        return 0;
     }
 
     @Override
-    public String getTitle() {
-        return "Admin inventory";
+    public List<HumanEntity> getViewers() {
+        return new ArrayList<>();
     }
 
     @Override
@@ -223,6 +226,12 @@ public class AdminInventory implements Inventory {
 
     @Override
     public InventoryHolder getHolder() {
+        return null;
+    }
+
+    @Override
+    public @Nullable InventoryHolder getHolder (boolean b)
+    {
         return null;
     }
 

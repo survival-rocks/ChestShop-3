@@ -79,7 +79,7 @@ public class PlayerInteract implements Listener {
             return;
         }
 
-        if (!isSign(block) || player.getInventory().getItemInMainHand().getType() == Material.SIGN) // Blocking accidental sign edition
+        if (!isSign(block)) // Blocking accidental sign edition
             return;
 
         Sign sign = (Sign) block.getState();
@@ -130,7 +130,9 @@ public class PlayerInteract implements Listener {
 
         if (!AccessToggle.isIgnoring(player) && ChestShopSign.canAccess(player, sign) && !ChestShopSign.isAdminShop(sign)) {
             if (Properties.IGNORE_ACCESS_PERMS || ChestShopSign.isOwner(player, sign)) {
-                if ((Properties.ALLOW_SIGN_CHEST_OPEN && !player.getInventory().getItemInMainHand().getType().name().contains("_DYE"))
+                if ((Properties.ALLOW_SIGN_CHEST_OPEN
+                        && !player.getInventory().getItemInMainHand().getType().name().contains("_DYE"))
+                        && player.getInventory().getItemInMainHand().getType() != Material.GLOW_INK_SAC
                         && !(Properties.IGNORE_CREATIVE_MODE && player.getGameMode() == GameMode.CREATIVE)) {
                     if (player.isSneaking() || player.isInsideVehicle()
                             || (Properties.ALLOW_LEFT_CLICK_DESTROYING && action == LEFT_CLICK_BLOCK)) {
