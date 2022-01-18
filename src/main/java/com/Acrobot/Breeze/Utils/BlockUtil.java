@@ -55,8 +55,8 @@ public class BlockUtil {
     public static Block getAttachedBlock(org.bukkit.block.Sign sign) {
         BlockFace direction;
         BlockData blockData = sign.getBlockData();
-        if (blockData instanceof WallSign) {
-            direction = ((Directional) blockData).getFacing().getOppositeFace();
+        if (blockData instanceof WallSign wallSign) {
+            direction = wallSign.getFacing().getOppositeFace();
         } else if (blockData instanceof Sign) {
             direction = BlockFace.DOWN;
         } else {

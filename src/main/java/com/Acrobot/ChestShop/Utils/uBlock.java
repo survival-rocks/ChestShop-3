@@ -14,12 +14,16 @@ import org.bukkit.block.data.type.Chest;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.inventory.InventoryHolder;
 
+import java.util.Optional;
+
 /**
  * @author Acrobot
  */
 public class uBlock {//
     public static final BlockFace[] CHEST_EXTENSION_FACES = {BlockFace.EAST, BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH};
-    public static final BlockFace[] SHOP_FACES = {BlockFace.SELF, BlockFace.DOWN, BlockFace.UP, BlockFace.EAST, BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH};
+    public static final BlockFace[] SHOP_FACES = {
+            BlockFace.SELF, BlockFace.EAST, BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH, BlockFace.UP, BlockFace.DOWN
+    };
     @Deprecated
     public static final BlockFace[] NEIGHBOR_FACES = {BlockFace.EAST, BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH};
 
@@ -39,6 +43,29 @@ public class uBlock {//
 
         return sign;
     }
+
+
+    public static final BlockFace[] STICKED_FACES = {BlockFace.EAST, BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH};
+
+    public static Optional<Sign> improvedGetSign (Block block)
+    {
+        for (BlockFace bf : STICKED_FACES)
+        {
+            Block faceBlock = block.getRelative(bf);
+            if (!(faceBlock.getBlockData() instanceof WallSign) || !(faceBlock.getState() instanceof Sign sign))
+                continue;
+
+            if (!ChestShopSign.isValid(sign, false))
+                continue;
+
+            if (BlockUtil.getAttachedBlock(sign).getLocation().equals(block.getLocation()))
+                return Optional.of(sign);
+        }
+
+        return Optional.ofNullable(getConnectedSign(block));
+    }
+
+
 
     /**
      * @deprecated Use {@link #findConnectedContainer(Sign)}
