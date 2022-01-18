@@ -60,6 +60,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+import rocks.survival.minecraft.network.server.survival.Main;
 
 import java.io.File;
 import java.io.IOException;
@@ -99,8 +100,12 @@ public class ChestShop extends JavaPlugin {
         Dependencies.initializePlugins();
     }
 
+    public static Main survivalMain;
+
     @Override
     public void onEnable() {
+        survivalMain = (Main) getServer().getPluginManager().getPlugin("survival");
+
         turnOffDatabaseLogging();
         if (!handleMigrations()) {
             return;

@@ -7,8 +7,6 @@ import org.bukkit.event.Listener;
 
 import java.math.BigDecimal;
 
-import static com.Acrobot.Breeze.Utils.PriceUtil.hasBuyPrice;
-import static com.Acrobot.Breeze.Utils.PriceUtil.hasSellPrice;
 import static com.Acrobot.ChestShop.Events.PreShopCreationEvent.CreationOutcome.SELL_PRICE_HIGHER_THAN_BUY_PRICE;
 import static com.Acrobot.ChestShop.Signs.ChestShopSign.PRICE_LINE;
 import static org.bukkit.event.EventPriority.HIGH;
@@ -20,11 +18,11 @@ public class PriceRatioChecker implements Listener {
 
     @EventHandler(priority = HIGH)
     public static void onPreShopCreation(PreShopCreationEvent event) {
-        String priceLine = event.getSignLine(PRICE_LINE);
+        String priceLine = event.getSignLineRaw(PRICE_LINE);
 
-        if (hasBuyPrice(priceLine, true) && hasSellPrice(priceLine, true)) {
-            BigDecimal buyPrice = PriceUtil.getExactBuyPrice(priceLine, true);
-            BigDecimal sellPrice = PriceUtil.getExactSellPrice(priceLine, true);
+        if (PriceUtil.hasBuyPriceCreation(priceLine) && PriceUtil.hasSellPriceCreation(priceLine)) {
+            BigDecimal buyPrice = PriceUtil.getExactBuyPriceCreation(priceLine);
+            BigDecimal sellPrice = PriceUtil.getExactSellPriceCreation(priceLine);
             if (sellPrice.compareTo(buyPrice) > 0) {
                 event.setOutcome(SELL_PRICE_HIGHER_THAN_BUY_PRICE);
             }

@@ -9,6 +9,7 @@ import com.Acrobot.ChestShop.Events.AccountQueryEvent;
 import com.Acrobot.ChestShop.Events.Economy.CurrencyAddEvent;
 import com.Acrobot.ChestShop.Events.Economy.CurrencySubtractEvent;
 import com.Acrobot.ChestShop.Events.ShopDestroyedEvent;
+import com.Acrobot.ChestShop.Listeners.PreShopCreation.ItemChecker;
 import com.Acrobot.ChestShop.Permission;
 import com.Acrobot.ChestShop.UUIDs.NameManager;
 import org.bukkit.Bukkit;
@@ -18,10 +19,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 import static com.Acrobot.ChestShop.Permission.NOFEE;
-import static com.Acrobot.ChestShop.Signs.ChestShopSign.AUTOFILL_CODE;
 import static com.Acrobot.ChestShop.Signs.ChestShopSign.ITEM_LINE;
 import static com.Acrobot.ChestShop.Signs.ChestShopSign.NAME_LINE;
 
@@ -37,11 +36,11 @@ public class ShopRefundListener implements Listener {//?
             return;
         }
 
-        if (ChatColor.stripColor(event.getSign().getLine(ITEM_LINE)).equals(AUTOFILL_CODE)) {
+        if (ItemChecker.AUTO_FILL.equals(event.getSign().line(ITEM_LINE))) {
             return;
         }
 
-        AccountQueryEvent accountQueryEvent = new AccountQueryEvent(event.getSign().getLine(NAME_LINE));
+        AccountQueryEvent accountQueryEvent = new AccountQueryEvent(ChatColor.stripColor(event.getSign().getLine(NAME_LINE)));
         Bukkit.getPluginManager().callEvent(accountQueryEvent);
         Account account = accountQueryEvent.getAccount();
         if (account == null) {

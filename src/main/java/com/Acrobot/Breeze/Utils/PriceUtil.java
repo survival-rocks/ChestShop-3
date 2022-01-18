@@ -1,6 +1,7 @@
 package com.Acrobot.Breeze.Utils;
 
-import net.md_5.bungee.api.ChatColor;
+import com.Acrobot.ChestShop.Signs.PriceComponent;
+import net.kyori.adventure.text.Component;
 
 import java.math.BigDecimal;
 import java.util.Locale;
@@ -13,11 +14,7 @@ public class PriceUtil {
     public static final BigDecimal FREE = BigDecimal.valueOf(0);
     public static final BigDecimal MAX = BigDecimal.valueOf(Double.MAX_VALUE);
 
-    public static final String FREE_TEXT = "free";
-    public static final String CURRENCY = "¢";
-
-    public static final String BUY_INDICATOR = ChatColor.GREEN.toString();
-    public static final String SELL_INDICATOR = ChatColor.RED.toString();
+    public static final String FREE_TEXT = "Free";
 
     public static final char CREATE_BUY_INDICATOR = 'b';
     public static final char CREATE_SELL_INDICATOR = 's';
@@ -36,12 +33,12 @@ public class PriceUtil {
         return getExactDifference(split, character);
     }
 
-    public static BigDecimal getTransactionExact(String text, String indicator) {
-        String[] split = text.replace(" ", "").replace(CURRENCY, "").toLowerCase().split(ChatColor.BLACK + ":");
-        String character = indicator.toLowerCase(Locale.ROOT);
-
-        return getExactDifference(split, character);
-    }
+//    public static BigDecimal getTransactionExact(String text, String indicator) {
+//        String[] split = text.replace(" ", "").replace(CURRENCY, "").toLowerCase().split(ChatColor.BLACK + ":");
+//        String character = indicator.toLowerCase(Locale.ROOT);
+//
+//        return getExactDifference(split, character);
+//    }
 
     private static BigDecimal getExactDifference (String[] split, String character)
     {
@@ -52,7 +49,7 @@ public class PriceUtil {
 
             part = part.replace(character, "");
 
-            if (part.equals(FREE_TEXT)) {
+            if (part.equalsIgnoreCase(FREE_TEXT)) {
                 return FREE;
             }
 
@@ -76,8 +73,13 @@ public class PriceUtil {
      * @param text Text to check
      * @return Exact buy price
      */
-    public static BigDecimal getExactBuyPrice(String text, boolean creation) {
-        return creation? getCreationExact(text, CREATE_BUY_INDICATOR) : getTransactionExact(text, BUY_INDICATOR);
+    public static BigDecimal getExactBuyPrice(Component text) {
+        PriceComponent.ReadPrice readPrice = PriceComponent.readPrice(text);
+        return readPrice.buy() == null? NO_PRICE : BigDecimal.valueOf(readPrice.buy());
+    }
+
+    public static BigDecimal getExactBuyPriceCreation(String text) {
+        return getCreationExact(text, CREATE_BUY_INDICATOR);
     }
 
     /**
@@ -86,8 +88,13 @@ public class PriceUtil {
      * @param text Text to check
      * @return Exact sell price
      */
-    public static BigDecimal getExactSellPrice(String text, boolean creation) {
-        return creation? getCreationExact(text, CREATE_SELL_INDICATOR) : getTransactionExact(text, SELL_INDICATOR);
+    public static BigDecimal getExactSellPrice(Component text) {
+        PriceComponent.ReadPrice readPrice = PriceComponent.readPrice(text);
+        return readPrice.sell() == null? NO_PRICE : BigDecimal.valueOf(readPrice.sell());
+    }
+
+    public static BigDecimal getExactSellPriceCreation(String text) {
+        return getCreationExact(text, CREATE_SELL_INDICATOR);
     }
 
     /**
@@ -96,8 +103,13 @@ public class PriceUtil {
      * @param text Price text
      * @return If there is a buy price
      */
-    public static boolean hasBuyPrice(String text, boolean creation) {
-        return creation? hasPrice(text, CREATE_BUY_INDICATOR) : hasPrice(text, BUY_INDICATOR);
+    public static boolean hasBuyPrice(Component text) {
+        return PriceComponent.readPrice(text).buy() != null;
+    }
+
+    public static boolean hasBuyPriceCreation(String text)
+    {
+        return hasPrice(text, CREATE_BUY_INDICATOR);
     }
 
     /**
@@ -106,8 +118,13 @@ public class PriceUtil {
      * @param text Price text
      * @return If there is a sell price
      */
-    public static boolean hasSellPrice(String text, boolean creation) {
-        return creation? hasPrice(text, CREATE_SELL_INDICATOR) : hasPrice(text, SELL_INDICATOR);
+    public static boolean hasSellPrice(Component text) {
+        return PriceComponent.readPrice(text).sell() != null;
+    }
+
+    public static boolean hasSellPriceCreation(String text)
+    {
+        return hasPrice(text, CREATE_SELL_INDICATOR);
     }
 
     /**
@@ -121,10 +138,10 @@ public class PriceUtil {
         return getCreationExact(text, indicator).compareTo(NO_PRICE) != 0;
     }
 
-    public static boolean hasPrice (String text, String indicator)
-    {
-        return getTransactionExact(text, indicator).compareTo(NO_PRICE) != 0;
-    }
+//    public static boolean hasPrice (String text, String indicator)
+//    {
+//        return getTransactionExact(text, indicator).compareTo(NO_PRICE) != 0;
+//    }
 
     /**
      * Checks if the string is a valid price

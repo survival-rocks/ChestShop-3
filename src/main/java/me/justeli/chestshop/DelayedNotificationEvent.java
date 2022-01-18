@@ -1,8 +1,8 @@
 package me.justeli.chestshop;
 
-import me.justeli.survival.companies.storage.Company;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import rocks.survival.minecraft.network.server.survival.companies.storage.Company;
 
 import java.util.HashSet;
 import java.util.Set;

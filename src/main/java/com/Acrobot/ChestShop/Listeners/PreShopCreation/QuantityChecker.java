@@ -18,7 +18,7 @@ public class QuantityChecker implements Listener {
     public static void onPreShopCreation(PreShopCreationEvent event) {
         int amount = -1;
         try {
-            amount = Integer.parseInt(event.getSignLine(QUANTITY_LINE));
+            amount = Integer.parseInt(event.getSignLineRaw(QUANTITY_LINE));
         } catch (NumberFormatException notANumber) {}
 
         if (amount < 1 || amount > Properties.MAX_SHOP_AMOUNT) {

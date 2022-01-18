@@ -23,7 +23,7 @@ public class ChestChecker implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public static void onPreShopCreation(PreShopCreationEvent event) {
-        String nameLine = event.getSignLine(NAME_LINE);
+        String nameLine = event.getSignLineRaw(NAME_LINE);
 
         if (ChestShopSign.isAdminShop(nameLine)) {
             return;

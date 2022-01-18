@@ -26,14 +26,14 @@ public class SignSticker implements Listener {
             return;
         }
 
-        if (ChestShopSign.isAdminShop(event.getSignLine(NAME_LINE))) {
+        if (ChestShopSign.isAdminShop(event.getSignLineRaw(NAME_LINE))) {
             return;
         }
 
-        stickSign(event.getSign().getBlock(), event.getSignLines());
+        stickSign(event.getSign().getBlock(), event);
     }
 
-    private static void stickSign(Block signBlock, String[] lines) {
+    private static void stickSign(Block signBlock, ShopCreatedEvent event) {
         if (!(signBlock.getBlockData() instanceof Sign)) {
             return;
         }
@@ -60,8 +60,9 @@ public class SignSticker implements Listener {
         signMaterial.setFacing(shopBlockFace.getOppositeFace());
         sign.setBlockData(signMaterial);
 
-        for (int i = 0; i < lines.length; ++i) {
-            sign.setLine(i, lines[i]);
+        // wtf?
+        for (int i = 0; i < event.getSignLines().size(); ++i) {
+            sign.line(i, event.getSignLine(i));
         }
 
         sign.update(true);

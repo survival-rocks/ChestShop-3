@@ -1,12 +1,10 @@
 package com.Acrobot.ChestShop.Listeners.PreShopCreation;
 
 import com.Acrobot.Breeze.Utils.PriceUtil;
-import com.Acrobot.ChestShop.Configuration.Messages;
 import com.Acrobot.ChestShop.Events.ItemParseEvent;
 import com.Acrobot.ChestShop.Events.PreShopCreationEvent;
 import com.Acrobot.ChestShop.Permission;
 import com.Acrobot.ChestShop.UUIDs.NameManager;
-import me.justeli.survival.companies.handlers.DistanceModule;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -34,8 +32,8 @@ public class PermissionChecker implements Listener {
     public static void onPreShopCreation(PreShopCreationEvent event) {
         Player player = event.getPlayer();
 
-        String priceLine = event.getSignLine(PRICE_LINE);
-        String itemLine = event.getSignLine(ITEM_LINE);
+        String priceLine = event.getSignLineRaw(PRICE_LINE);
+        String itemLine = event.getSignLineRaw(ITEM_LINE);
 
         if (event.getCompany() == null)
         {
@@ -43,25 +41,25 @@ public class PermissionChecker implements Listener {
             return;
         }
 
-        if (!NameManager.canUseName(event.getPlayer(), OTHER_NAME_DESTROY, event.getCompany().getDisplayName()))
+        if (!NameManager.canUseName(event.getPlayer(), OTHER_NAME_DESTROY, event.getCompany().getShortSignName()))
         {
             event.setOutcome(NOT_PART_OF_COMPANY);
             return;
         }
 
-        if (!DistanceModule.canBePlacedHere(event.getCompany(), event.getSign().getLocation()))
-        {
-            event.setOutcome(TOO_CLOSE_TO_OTHERS);
-            return;
-        }
+//        if (!DistanceModule.canBePlacedHere(event.getCompany(), event.getSign().getLocation()))
+//        {
+//            event.setOutcome(TOO_CLOSE_TO_OTHERS);
+//            return;
+//        }
 
         ItemParseEvent parseEvent = new ItemParseEvent(itemLine);
         Bukkit.getPluginManager().callEvent(parseEvent);
         ItemStack item = parseEvent.getItem();
 
         if (item == null) {
-            if ((PriceUtil.hasBuyPrice(priceLine, true) && !Permission.has(player, SHOP_CREATION_BUY))
-                    || (PriceUtil.hasSellPrice(priceLine, true) && !Permission.has(player, SHOP_CREATION_SELL))) {
+            if ((PriceUtil.hasBuyPriceCreation(priceLine) && !Permission.has(player, SHOP_CREATION_BUY))
+                    || (PriceUtil.hasSellPriceCreation(priceLine) && !Permission.has(player, SHOP_CREATION_SELL))) {
                 event.setOutcome(NO_PERMISSION);
             }
             return;
@@ -75,7 +73,7 @@ public class PermissionChecker implements Listener {
             return;
         }
 
-        if (PriceUtil.hasBuyPrice(priceLine, true)) {
+        if (PriceUtil.hasBuyPriceCreation(priceLine)) {
             if (Permission.has(player, SHOP_CREATION_BUY_ID + matID)) {
                 return;
             }
@@ -86,7 +84,7 @@ public class PermissionChecker implements Listener {
             return;
         }
 
-        if (PriceUtil.hasSellPrice(priceLine, true)) {
+        if (PriceUtil.hasSellPriceCreation(priceLine)) {
             if (Permission.has(player, SHOP_CREATION_SELL_ID + matID)) {
                 return;
             }

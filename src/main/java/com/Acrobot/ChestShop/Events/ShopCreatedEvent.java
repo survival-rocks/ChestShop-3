@@ -1,14 +1,18 @@
 package com.Acrobot.ChestShop.Events;
 
-import me.justeli.survival.companies.storage.Company;
+import net.kyori.adventure.text.Component;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Container;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.block.SignChangeEvent;
+import rocks.survival.minecraft.network.server.survival.companies.storage.Company;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * Represents a state after shop creation
@@ -21,15 +25,15 @@ public class ShopCreatedEvent extends Event {
     private final Player creator;
 
     private final Sign sign;
-    private final String[] signLines;
+    private final SignChangeEvent signLines;
     private final Company company;
     @Nullable private final Container container;
 
-    public ShopCreatedEvent(Player creator, Sign sign, @Nullable Container container, String[] signLines, Company company) {
+    public ShopCreatedEvent(Player creator, Sign sign, @Nullable Container container, SignChangeEvent signLines, Company company) {
         this.creator = creator;
         this.sign = sign;
         this.container = container;
-        this.signLines = signLines.clone();
+        this.signLines = signLines;
         this.company = company;
     }
 
@@ -39,8 +43,12 @@ public class ShopCreatedEvent extends Event {
      * @param line Line number (0-3)
      * @return Text on the sign
      */
-    public String getSignLine(short line) {
-        return signLines[line];
+    public Component getSignLine(int line) {
+        return signLines.line(line);
+    }
+
+    public String getSignLineRaw(int line) {
+        return ChatColor.stripColor(signLines.getLine(line));
     }
 
     /**
@@ -48,8 +56,8 @@ public class ShopCreatedEvent extends Event {
      *
      * @return Text on the sign
      */
-    public String[] getSignLines() {
-        return signLines;
+    public List<Component> getSignLines() {
+        return signLines.lines();
     }
 
     /**

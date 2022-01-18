@@ -10,12 +10,14 @@ import com.Acrobot.ChestShop.Events.PreShopCreationEvent;
 import com.Acrobot.ChestShop.Permission;
 import com.Acrobot.ChestShop.Signs.ChestShopSign;
 import com.Acrobot.ChestShop.UUIDs.NameManager;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static com.Acrobot.ChestShop.Permission.NOFEE;
 import static com.Acrobot.ChestShop.Signs.ChestShopSign.NAME_LINE;
@@ -25,6 +27,13 @@ import static com.Acrobot.ChestShop.Signs.ChestShopSign.NAME_LINE;
  */
 public class CreationFeeGetter implements Listener {
 
+    private static final List<Component> EMPTY_COMPONENTS = List.of(
+            Component.text().build(),
+            Component.text().build(),
+            Component.text().build(),
+            Component.text().build()
+    );
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public static void onShopCreation(PreShopCreationEvent event) {
         BigDecimal shopCreationPrice = Properties.SHOP_CREATION_PRICE;
@@ -33,9 +42,9 @@ public class CreationFeeGetter implements Listener {
             return;
         }
 
-        if (ChestShopSign.isAdminShop(event.getSignLine(NAME_LINE))) {
-            return;
-        }
+//        if (ChestShopSign.isAdminShop(event.getSignLine(NAME_LINE))) {
+//            return;
+//        }
 
         Player player = event.getPlayer();
 
@@ -48,7 +57,7 @@ public class CreationFeeGetter implements Listener {
 
         if (!subtractionEvent.wasHandled()) {
             event.setOutcome(PreShopCreationEvent.CreationOutcome.NOT_ENOUGH_MONEY);
-            event.setSignLines(new String[4]);
+            event.setSignLines(EMPTY_COMPONENTS);
             return;
         }
 

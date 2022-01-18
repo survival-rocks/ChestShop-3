@@ -5,14 +5,10 @@ import com.Acrobot.ChestShop.ChestShop;
 import com.Acrobot.ChestShop.Configuration.Properties;
 import com.Acrobot.ChestShop.Events.ItemParseEvent;
 import com.Acrobot.ChestShop.Events.MaterialParseEvent;
-import com.google.common.collect.ImmutableMap;
 import de.themoep.ShowItem.api.ShowItem;
 import info.somethingodd.OddItem.OddItem;
 import me.justeli.chestshop.FormatMessage;
-import me.justeli.common.api.item.HoverItem;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConstructor;
 import org.bukkit.configuration.file.YamlRepresenter;
@@ -21,7 +17,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
-import org.json.simple.JSONObject;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.nodes.Tag;
@@ -32,10 +27,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static com.Acrobot.Breeze.Utils.StringUtil.getMinecraftCharWidth;
 import static com.Acrobot.Breeze.Utils.StringUtil.getMinecraftStringWidth;
@@ -536,7 +529,7 @@ public class MaterialUtil {
             ItemStack item = stock[0].clone();
             item.setAmount(Arrays.stream(stock).mapToInt(ItemStack::getAmount).sum());
 
-            player.spigot().sendMessage(FormatMessage.transaction(message, item));
+            FormatMessage.transaction(message, item).chat(player);
             return true;
         }
     }

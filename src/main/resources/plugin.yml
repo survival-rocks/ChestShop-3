@@ -5,6 +5,9 @@ author: Acrobot
 authors: ['https://github.com/ChestShop-authors/ChestShop-3/contributors']
 description: A chest shop for economy plugins.
 softdepend: [Vault, Reserve, LWC, Lockette, Deadbolt, OddItem, WorldGuard, GriefPrevention, RedProtect, Heroes, SimpleChestLock, Residence, ShowItem]
+depend:
+  - common
+  - survival
 api-version: '1.13'
 
 commands:

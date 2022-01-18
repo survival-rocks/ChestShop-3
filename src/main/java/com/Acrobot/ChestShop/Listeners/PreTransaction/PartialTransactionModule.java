@@ -9,13 +9,13 @@ import com.Acrobot.ChestShop.Events.Economy.CurrencyAmountEvent;
 import com.Acrobot.ChestShop.Events.Economy.CurrencyCheckEvent;
 import com.Acrobot.ChestShop.Events.Economy.CurrencyHoldEvent;
 import com.Acrobot.ChestShop.Events.PreTransactionEvent;
-import me.justeli.survival.companies.storage.Company;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import rocks.survival.minecraft.network.server.survival.companies.storage.Company;
 
 import java.math.BigDecimal;
 import java.math.MathContext;

@@ -7,12 +7,11 @@ import com.Acrobot.ChestShop.Configuration.Messages;
 import com.Acrobot.ChestShop.Configuration.Properties;
 import com.Acrobot.ChestShop.Economy.Economy;
 import com.Acrobot.ChestShop.Events.TransactionEvent;
-import me.justeli.api.wide.Convert;
-import me.justeli.api.wide.Text;
 import me.justeli.chestshop.DelayedMessage;
 import me.justeli.chestshop.DelayedNotificationEvent;
-import me.justeli.survival.companies.storage.Company;
+import me.justeli.util.Convert;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -20,6 +19,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import rocks.survival.minecraft.network.server.survival.companies.storage.Company;
+import rocks.survival.minecraft.network.utils.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +52,7 @@ public class TransactionMessageSender implements Listener {
         for (DelayedMessage message : event.getMessages())
         {
             messages.add(new Text().primary("- Sold").variable(message.getAmount()).primary("of").item(message.getItem()).primary("for")
-                    .coins(message.getPricePaid()).primary("to").variable(Convert.listToSentence(message.getBuyerNames().toArray(new String[0]))));
+                    .coins(message.getPricePaid()).primary("to").variable(Convert.arrayToSentence(message.getBuyerNames().toArray(new String[0]))));
         }
 
         for (Player player : event.getCompany().getOnlinePrivateShareHolders())
@@ -59,8 +60,8 @@ public class TransactionMessageSender implements Listener {
             if (event.getMessages().size() == 0)
                 continue;
 
-            notify.chatServer(player);
-            messages.forEach(message -> message.chatServer(player));
+            notify.chat(player);
+            messages.forEach(message -> message.chat(player));
         }
     }
 
@@ -85,7 +86,8 @@ public class TransactionMessageSender implements Listener {
         ItemStack item = event.getStock()[0].clone();
         int amount = Arrays.stream(event.getStock()).mapToInt(ItemStack::getAmount).sum();
 
-        DelayedMessage message = new DelayedMessage(player.getName(), amount, item, event.getSign().getLine(ITEM_LINE), event.getExactPrice().longValue());
+        DelayedMessage message = new DelayedMessage(player.getName(), amount, item, ChatColor.stripColor(event.getSign().getLine(ITEM_LINE)),
+                event.getExactPrice().longValue());
 
         if (!cachedNotification.containsKey(event.getCompany().getRawName()))
         {
@@ -102,7 +104,7 @@ public class TransactionMessageSender implements Listener {
             DelayedNotificationEvent delayed = cachedNotification.get(event.getCompany().getRawName());
             for (DelayedMessage existing : delayed.getMessages())
             {
-                if (existing.getItemCode().equals(event.getSign().getLine(ITEM_LINE)))
+                if (existing.getItemCode().equals(ChatColor.stripColor(event.getSign().getLine(ITEM_LINE))))
                 {
                     existing.addAmount(amount);
                     existing.addBuyerName(player.getName());

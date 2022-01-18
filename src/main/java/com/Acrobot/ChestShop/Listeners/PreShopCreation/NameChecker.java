@@ -1,15 +1,20 @@
 package com.Acrobot.ChestShop.Listeners.PreShopCreation;
 
+import com.Acrobot.ChestShop.ChestShop;
 import com.Acrobot.ChestShop.Events.PreShopCreationEvent;
-import me.justeli.survival.companies.Companies;
-import me.justeli.survival.companies.storage.Company;
-import me.justeli.survival.companies.storage.ShareHolder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import rocks.survival.minecraft.network.server.survival.companies.storage.Company;
+import rocks.survival.minecraft.network.server.survival.companies.storage.ShareHolder;
 
+import java.util.HashMap;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import static com.Acrobot.ChestShop.Events.PreShopCreationEvent.CreationOutcome.CREATE_VIA_COMPANY;
 import static com.Acrobot.ChestShop.Events.PreShopCreationEvent.CreationOutcome.NOT_PART_OF_COMPANY;
@@ -36,13 +41,15 @@ public class NameChecker
         handleEvent(event);
     }
 
+    private static final HashMap<UUID, String> LATEST_COMPANY_USED = new HashMap<>();
+
     private static void handleEvent (PreShopCreationEvent event)
     {
-        String name = event.getSignLine(NAME_LINE);
+        String name = event.getSignLineRaw(NAME_LINE);
         Player player = event.getPlayer();
 
         Company company = event.getCompany();
-        ShareHolder shareHolder = Companies.shareHolder(player.getUniqueId());
+        ShareHolder shareHolder = ChestShop.survivalMain.shareHolder(player.getUniqueId());
 
         if (shareHolder == null)
         {
@@ -52,8 +59,24 @@ public class NameChecker
 
         else if (company == null && name.isEmpty())
         {
-            Set<Company> owns = shareHolder.getOwnedCompanies();
-            company = owns == null || owns.size() == 0? null : owns.stream().findFirst().get();
+            if (LATEST_COMPANY_USED.containsKey(player.getUniqueId()))
+            {
+                Optional<Company> foundCompany = ChestShop.survivalMain.company(LATEST_COMPANY_USED.get(player.getUniqueId()));
+                if (foundCompany.isPresent())
+                {
+                    company = foundCompany.get();
+                }
+            }
+
+            Set<String> owns = shareHolder.getOwnedCompaniesRaw();
+            if (company == null && owns != null && owns.size() != 0)
+            {
+                Optional<Company> foundCompany = ChestShop.survivalMain.company(owns.stream().findFirst().get());
+                if (foundCompany.isPresent())
+                {
+                    company = foundCompany.get();
+                }
+            }
 
             if (company == null)
             {
@@ -69,7 +92,7 @@ public class NameChecker
 
         else if (company == null)
         {
-            company = Companies.get(name);
+            company = ChestShop.survivalMain.company(name).orElse(null);
             if (company == null && !name.equalsIgnoreCase(player.getName()))
             {
                 event.setOutcome(UNKNOWN_COMPANY);
@@ -80,7 +103,7 @@ public class NameChecker
                 event.setOutcome(CREATE_VIA_COMPANY);
                 return;
             }
-            else if (!company.getPrivateShareHolders().contains(player.getUniqueId()))
+            else if (company == null || !company.getPrivateShareHolders().contains(player.getUniqueId()))
             {
                 event.setOutcome(NOT_PART_OF_COMPANY);
                 return;
@@ -88,6 +111,9 @@ public class NameChecker
         }
 
         event.setCompany(company);
-        event.setSignLine(NAME_LINE, company.getDisplayName());
+        LATEST_COMPANY_USED.put(player.getUniqueId(), company.getShortSignName());
+
+        Component component = Component.text().append(Component.text(company.getShortSignName()).color(TextColor.color(company.getColor()))).build();
+        event.setSignLine(NAME_LINE, component);
     }
 }

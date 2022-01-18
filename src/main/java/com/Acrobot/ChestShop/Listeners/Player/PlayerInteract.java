@@ -1,6 +1,7 @@
 package com.Acrobot.ChestShop.Listeners.Player;
 
 import com.Acrobot.Breeze.Utils.*;
+import com.Acrobot.ChestShop.ChestShop;
 import com.Acrobot.ChestShop.Commands.AccessToggle;
 import com.Acrobot.ChestShop.Configuration.Messages;
 import com.Acrobot.ChestShop.Configuration.Properties;
@@ -11,13 +12,14 @@ import com.Acrobot.ChestShop.Events.Economy.AccountCheckEvent;
 import com.Acrobot.ChestShop.Events.ItemParseEvent;
 import com.Acrobot.ChestShop.Events.PreTransactionEvent;
 import com.Acrobot.ChestShop.Events.TransactionEvent;
+import com.Acrobot.ChestShop.Listeners.PreShopCreation.ItemChecker;
+import com.Acrobot.ChestShop.Listeners.PreShopCreation.PriceChecker;
 import com.Acrobot.ChestShop.Permission;
 import com.Acrobot.ChestShop.Security;
 import com.Acrobot.ChestShop.Signs.ChestShopSign;
+import com.Acrobot.ChestShop.Signs.PriceComponent;
 import com.Acrobot.ChestShop.Utils.uBlock;
-import me.justeli.api.wide.Text;
-import me.justeli.survival.companies.Companies;
-import me.justeli.survival.companies.storage.Company;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -35,11 +37,14 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import rocks.survival.minecraft.network.server.survival.companies.storage.Company;
+import rocks.survival.minecraft.network.utils.Text;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -87,7 +92,7 @@ public class PlayerInteract implements Listener {
             return;
         }
 
-        if (Properties.ALLOW_AUTO_ITEM_FILL && ChatColor.stripColor(sign.getLine(ITEM_LINE)).equals(AUTOFILL_CODE)) {
+        if (Properties.ALLOW_AUTO_ITEM_FILL && ItemChecker.AUTO_FILL.equals(sign.line(ITEM_LINE))) {
             if (ChestShopSign.hasPermission(player, OTHER_NAME_CREATE, sign)) {
                 ItemStack item = player.getInventory().getItemInMainHand();
                 if (!MaterialUtil.isEmpty(item)) {
@@ -99,23 +104,41 @@ public class PlayerInteract implements Listener {
                         com.Acrobot.ChestShop.ChestShop.getPlugin().getLogger().log(Level.SEVERE, "Error while generating shop sign item name", e);
                         return;
                     }
-                    String[] lines = sign.getLines();
-                    lines[ITEM_LINE] = itemCode;
 
-                    lines[PRICE_LINE] = lines[PRICE_LINE]
-                            .replace("¢", "")
-                            .replace(ChatColor.GREEN.toString(), "B")
-                            .replace(ChatColor.RED.toString(), "S");
+                    sign.line(ITEM_LINE, Component.text(itemCode));
 
-                    SignChangeEvent changeEvent = new SignChangeEvent(block, player, lines);
+                    PriceComponent.ReadPrice readPrice = PriceComponent.readPrice(sign.line(PRICE_LINE));
+
+                    String editedSign = "";
+                    if (readPrice.buy() != null && readPrice.sell() != null)
+                    {
+                        editedSign = "B" + readPrice.buy() + ":" + "S" + readPrice.sell();
+                    }
+                    else if (readPrice.buy() != null)
+                    {
+                        editedSign = "B" + readPrice.buy();
+                    }
+                    else if (readPrice.sell() != null)
+                    {
+                        editedSign = "S" + readPrice.sell();
+                    }
+
+                    sign.line(PRICE_LINE, Component.text(editedSign));
+
+                    SignChangeEvent changeEvent = new SignChangeEvent(block, player, sign.lines());
                     com.Acrobot.ChestShop.ChestShop.callEvent(changeEvent);
-                    if (!changeEvent.isCancelled()) {
-                        for (byte i = 0; i < changeEvent.getLines().length; ++i) {
-                            sign.setLine(i, changeEvent.getLine(i));
+
+                    if (!changeEvent.isCancelled())
+                    {
+                        for (int i = 0; i < changeEvent.lines().size(); ++i)
+                        {
+                            Component line = changeEvent.line(i);
+                            if (line == null)
+                                continue;
+                            sign.line(i, line);
                         }
                         sign.update();
                     }
-                    sign.setLine(ITEM_LINE, itemCode);
                     sign.update();
 
                     player.sendMessage(Messages.prefix(Messages.SHOP_CREATED));
@@ -179,11 +202,10 @@ public class PlayerInteract implements Listener {
             return;
 
         Sign sign = uBlock.getConnectedSign(chest);
-
-        if (!sign.getLine(2).toLowerCase().contains(PriceUtil.BUY_INDICATOR))
+        if (PriceComponent.readPrice(sign.line(2)).buy() == null)
             return;
 
-        String line = sign.getLine(3);
+        String line = ChatColor.stripColor(sign.getLine(3));
 
         ItemParseEvent parseEvent = new ItemParseEvent(line);
         Bukkit.getPluginManager().callEvent(parseEvent);
@@ -194,31 +216,31 @@ public class PlayerInteract implements Listener {
         Inventory inventory = ((InventoryHolder)chest.getState()).getInventory();
         int amount = InventoryUtil.getAmount(item, inventory);
 
-        new Text().title("Shop owned by " + sign.getLine(0)).chatServer(player);
+        new Text().title("Shop owned by " + sign.getLine(0)).chat(player);
 
-        new Text().primary("Hover over item for details:").item(item).chatServer(player);
-        new Text().primary("Amount of item in stock:").number(amount).chatServer(player);
-        new Text().info("Right-click the sign to buy.").italic().chatServer(player);
+        new Text().primary("Hover over item for details:").item(item).chat(player);
+        new Text().primary("Amount of item in stock:").number(amount).chat(player);
+        new Text().info("Right-click the sign to buy.").italic().chat(player);
 
         clickedCache.put(player.getUniqueId(), chest);
     }
 
     private static PreTransactionEvent preparePreTransactionEvent(Sign sign, Player player, Action action) {
-        String name = sign.getLine(NAME_LINE);
-        String quantity = sign.getLine(QUANTITY_LINE);
-        String prices = sign.getLine(PRICE_LINE);
-        String material = sign.getLine(ITEM_LINE);
+        String name = ChatColor.stripColor(sign.getLine(NAME_LINE));
+        String quantity = ChatColor.stripColor(sign.getLine(QUANTITY_LINE));
+        Component prices = sign.line(PRICE_LINE);
+        String material = ChatColor.stripColor(sign.getLine(ITEM_LINE));
 
         boolean adminShop = ChestShopSign.isAdminShop(sign);
 
-        Company company = Companies.get(name);
-        if (company == null) {
+        Optional<Company> company = ChestShop.survivalMain.company(name);
+        if (company.isEmpty()) {
             player.sendMessage(Messages.prefix(Messages.COMPANY_NOT_FOUND));
             return null;
         }
 
         Action buy = Properties.REVERSE_BUTTONS ? LEFT_CLICK_BLOCK : RIGHT_CLICK_BLOCK;
-        BigDecimal price = (action == buy ? PriceUtil.getExactBuyPrice(prices, false) : PriceUtil.getExactSellPrice(prices, false));
+        BigDecimal price = (action == buy ? PriceUtil.getExactBuyPrice(prices) : PriceUtil.getExactSellPrice(prices));
 
         Container shopBlock = uBlock.findConnectedContainer(sign);
         Inventory ownerInventory = shopBlock != null ? shopBlock.getInventory() : null;
@@ -272,7 +294,7 @@ public class PlayerInteract implements Listener {
         }
 
         TransactionType transactionType = (action == buy ? BUY : SELL);
-        return new PreTransactionEvent(ownerInventory, player.getInventory(), items, price, player, company, sign, transactionType);
+        return new PreTransactionEvent(ownerInventory, player.getInventory(), items, price, player, company.get(), sign, transactionType);
     }
 
     private static boolean isAllowedForShift(boolean buyTransaction) {

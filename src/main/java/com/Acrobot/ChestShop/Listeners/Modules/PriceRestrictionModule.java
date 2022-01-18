@@ -5,6 +5,7 @@ import com.Acrobot.ChestShop.ChestShop;
 import com.Acrobot.ChestShop.Events.ChestShopReloadEvent;
 import com.Acrobot.ChestShop.Events.ItemParseEvent;
 import com.Acrobot.ChestShop.Events.PreShopCreationEvent;
+import com.Acrobot.ChestShop.Signs.PriceComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -104,7 +105,7 @@ public class PriceRestrictionModule implements Listener {
 
     @EventHandler
     public void onPreShopCreation(PreShopCreationEvent event) {
-        ItemParseEvent parseEvent = new ItemParseEvent(event.getSignLine(ITEM_LINE));
+        ItemParseEvent parseEvent = new ItemParseEvent(event.getSignLineRaw(ITEM_LINE));
         Bukkit.getPluginManager().callEvent(parseEvent);
         ItemStack material = parseEvent.getItem();
 
@@ -115,13 +116,14 @@ public class PriceRestrictionModule implements Listener {
         String itemType = material.getType().toString().toLowerCase(Locale.ROOT);
         int amount;
         try {
-            amount = Integer.parseInt(event.getSignLine(QUANTITY_LINE));
+            amount = Integer.parseInt(event.getSignLineRaw(QUANTITY_LINE));
         } catch (IllegalArgumentException e) {
             return;
         }
 
-        if (PriceUtil.hasBuyPrice(event.getSignLine(PRICE_LINE), true)) {
-            BigDecimal buyPrice = PriceUtil.getExactBuyPrice(event.getSignLine(PRICE_LINE), true);
+        String priceLine = event.getSignLineRaw(PRICE_LINE);
+        if (PriceUtil.hasBuyPriceCreation(priceLine)) {
+            BigDecimal buyPrice = PriceUtil.getExactBuyPriceCreation(priceLine);
 
             if (isValid("min.buy_price." + itemType) && buyPrice.compareTo(BigDecimal.valueOf(configuration.getDouble("min.buy_price." + itemType) * amount)) < 0) {
                 event.setOutcome(BUY_PRICE_BELOW_MIN);
@@ -132,8 +134,8 @@ public class PriceRestrictionModule implements Listener {
             }
         }
 
-        if (PriceUtil.hasSellPrice(event.getSignLine(PRICE_LINE), true)) {
-            BigDecimal sellPrice = PriceUtil.getExactSellPrice(event.getSignLine(PRICE_LINE), true);
+        if (PriceUtil.hasSellPriceCreation(priceLine)) {
+            BigDecimal sellPrice = PriceUtil.getExactSellPriceCreation(priceLine);
 
             if (isValid("min.sell_price." + itemType) && sellPrice.compareTo(BigDecimal.valueOf(configuration.getDouble("min.sell_price." + itemType) * amount)) < 0) {
                 event.setOutcome(SELL_PRICE_BELOW_MIN);

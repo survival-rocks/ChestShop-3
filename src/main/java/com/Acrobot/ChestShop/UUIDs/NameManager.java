@@ -15,18 +15,18 @@ import com.Acrobot.ChestShop.Signs.ChestShopSign;
 import com.j256.ormlite.dao.Dao;
 
 import com.j256.ormlite.stmt.SelectArg;
-import me.justeli.survival.companies.Companies;
-import me.justeli.survival.companies.storage.Company;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import rocks.survival.minecraft.network.server.survival.companies.storage.Company;
 
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
@@ -378,12 +378,12 @@ public class NameManager implements Listener {
             return true;
         }
 
-        Company company = Companies.get(name);
-        if (company == null) {
+        Optional<Company> company = ChestShop.survivalMain.company(name);
+        if (company.isEmpty()) {
             return false;
         }
 
-        return company.getPrivateShareHolders().contains(player.getUniqueId());
+        return company.get().getPrivateShareHolders().contains(player.getUniqueId());
     }
 
     @EventHandler

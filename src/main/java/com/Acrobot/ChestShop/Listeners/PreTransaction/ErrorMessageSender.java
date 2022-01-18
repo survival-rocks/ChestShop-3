@@ -9,16 +9,15 @@ import com.Acrobot.ChestShop.Economy.Economy;
 import com.Acrobot.ChestShop.Events.PreTransactionEvent;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import me.justeli.survival.companies.storage.Company;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
+import rocks.survival.minecraft.network.server.survival.companies.storage.Company;
 
 import java.util.UUID;
 
@@ -133,11 +132,11 @@ public class ErrorMessageSender implements Listener {
                 String replacedMessage = message.replace("%item", MaterialUtil.getItemList(stock));
 
                 if (Properties.NOTIFICATION_MESSAGE_COOLDOWN > 0) {
-                    Long last = notificationCooldowns.get(company.getDisplayName(), replacedMessage);
+                    Long last = notificationCooldowns.get(company.getShortSignName(), replacedMessage);
                     if (last != null && last + Properties.NOTIFICATION_MESSAGE_COOLDOWN * 1000 > System.currentTimeMillis()) {
                         return;
                     }
-                    notificationCooldowns.put(company.getDisplayName(), replacedMessage, System.currentTimeMillis());
+                    notificationCooldowns.put(company.getShortSignName(), replacedMessage, System.currentTimeMillis());
                 }
 
                 if (player.isOnline()) {

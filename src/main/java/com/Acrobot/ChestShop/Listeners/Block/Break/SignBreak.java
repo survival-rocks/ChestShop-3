@@ -8,6 +8,7 @@ import com.Acrobot.ChestShop.Listeners.Block.Break.Attached.PhysicsBreak;
 import com.Acrobot.ChestShop.Signs.ChestShopSign;
 import com.Acrobot.ChestShop.UUIDs.NameManager;
 import com.Acrobot.ChestShop.Utils.uBlock;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -142,7 +143,7 @@ public class SignBreak implements Listener {
                 continue;
             }
 
-            if (Properties.TURN_OFF_SIGN_PROTECTION || canDestroyShop(breaker, sign.getLine(NAME_LINE))) {
+            if (Properties.TURN_OFF_SIGN_PROTECTION || canDestroyShop(breaker, ChatColor.stripColor(sign.getLine(NAME_LINE)))) {
                 brokenBlocks.add(sign);
             } else {
                 canBeBroken = false;

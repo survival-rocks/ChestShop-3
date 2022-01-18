@@ -1,15 +1,18 @@
 package com.Acrobot.ChestShop.Listeners.PreShopCreation;
 
 import com.Acrobot.Breeze.Utils.PriceUtil;
+import com.Acrobot.Breeze.Utils.StringUtil;
 import com.Acrobot.ChestShop.Configuration.Properties;
 import com.Acrobot.ChestShop.Events.PreShopCreationEvent;
-import org.bukkit.ChatColor;
+import com.Acrobot.ChestShop.Signs.PriceComponent;
+import net.kyori.adventure.text.Component;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import java.util.Locale;
 
+import static com.Acrobot.Breeze.Utils.MaterialUtil.MAXIMUM_SIGN_WIDTH;
 import static com.Acrobot.Breeze.Utils.PriceUtil.CREATE_BUY_INDICATOR;
 import static com.Acrobot.Breeze.Utils.PriceUtil.CREATE_SELL_INDICATOR;
 import static com.Acrobot.Breeze.Utils.PriceUtil.isPrice;
@@ -23,7 +26,7 @@ public class PriceChecker implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public static void onPreShopCreation(PreShopCreationEvent event) {
-        String line = event.getSignLine(PRICE_LINE).toUpperCase(Locale.ROOT);
+        String line = event.getSignLineRaw(PRICE_LINE).toUpperCase(Locale.ROOT);
         if (Properties.PRICE_PRECISION <= 0) {
             line = line.replaceAll("\\.\\d*", ""); //remove too many decimal places
         } else {
@@ -49,40 +52,52 @@ public class PriceChecker implements Listener {
             return;
         }
 
+        Integer buyPrice = null;
+        Integer sellPrice = null;
+
         if (isPrice(part[0]))
         {
-            part[0] = PriceUtil.BUY_INDICATOR + part[0].trim() + PriceUtil.CURRENCY;
+            buyPrice = PriceComponent.parseInt(part[0].trim());
         }
         else if (part[0].contains("B"))
         {
-            part[0] = PriceUtil.BUY_INDICATOR + PriceUtil.getCreationExact(part[0], CREATE_BUY_INDICATOR).intValue() + PriceUtil.CURRENCY;
+            buyPrice = PriceUtil.getCreationExact(part[0], CREATE_BUY_INDICATOR).intValue();
         }
         else if (part[0].contains("S") && part.length == 1)
         {
-            part[0] = PriceUtil.SELL_INDICATOR + PriceUtil.getCreationExact(part[0], CREATE_SELL_INDICATOR).intValue() + PriceUtil.CURRENCY;
+            sellPrice = PriceUtil.getCreationExact(part[0], CREATE_SELL_INDICATOR).intValue();
         }
 
         if (part.length > 1)
         {
             if (isPrice(part[1]))
             {
-                part[1] = PriceUtil.SELL_INDICATOR + part[1].trim() + PriceUtil.CURRENCY;
+                sellPrice = PriceComponent.parseInt(part[1].trim());
             }
             else if (part[1].contains("S"))
             {
-                part[1] = PriceUtil.SELL_INDICATOR + PriceUtil.getCreationExact(part[1], CREATE_SELL_INDICATOR).intValue() + PriceUtil.CURRENCY;
+                sellPrice = PriceUtil.getCreationExact(part[1], CREATE_SELL_INDICATOR).intValue();
             }
         }
 
-        String priceLine = part.length > 1? part[0] + " " + ChatColor.BLACK + ": " + part[1] : part[0];
-        event.setSignLine(PRICE_LINE, priceLine);
+        Component price = PriceComponent.createPrice(buyPrice, sellPrice);
 
-        if (priceLine.length() > 15) {
+        if (price == null)
+        {
             event.setOutcome(INVALID_PRICE);
             return;
         }
 
-        if (!PriceUtil.hasBuyPrice(priceLine, false) && !PriceUtil.hasSellPrice(priceLine, false)) {
+        event.setSignLine(PRICE_LINE, price);
+
+        if (StringUtil.getMinecraftStringWidth(PriceComponent.SERIALIZER.serialize(price)) > MAXIMUM_SIGN_WIDTH) {
+            event.setOutcome(INVALID_PRICE);
+            return;
+        }
+
+        PriceComponent.ReadPrice readPrice = PriceComponent.readPrice(price);
+
+        if (readPrice.buy() == null && readPrice.sell() == null) {
             event.setOutcome(INVALID_PRICE);
         }
     }

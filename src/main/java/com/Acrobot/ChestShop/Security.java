@@ -9,6 +9,7 @@ import com.Acrobot.ChestShop.Events.Protection.ProtectionCheckEvent;
 import com.Acrobot.ChestShop.Signs.ChestShopSign;
 import com.Acrobot.ChestShop.Utils.uBlock;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -89,7 +90,7 @@ public class Security {
                 continue;
             }
 
-            AccountQueryEvent accountQueryEvent = new AccountQueryEvent(sign.getLine(ChestShopSign.NAME_LINE));
+            AccountQueryEvent accountQueryEvent = new AccountQueryEvent(ChatColor.stripColor(sign.getLine(ChestShopSign.NAME_LINE)));
             Bukkit.getPluginManager().callEvent(accountQueryEvent);
             Account account = accountQueryEvent.getAccount();
             if (account != null && !account.getUuid().equals(player.getUniqueId())) {

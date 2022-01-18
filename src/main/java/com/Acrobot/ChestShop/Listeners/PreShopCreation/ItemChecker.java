@@ -7,7 +7,10 @@ import com.Acrobot.ChestShop.Configuration.Properties;
 import com.Acrobot.ChestShop.Events.ItemParseEvent;
 import com.Acrobot.ChestShop.Events.PreShopCreationEvent;
 import com.Acrobot.ChestShop.Signs.ChestShopSign;
+import com.Acrobot.ChestShop.Signs.PriceComponent;
 import com.Acrobot.ChestShop.Utils.uBlock;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Container;
@@ -29,9 +32,11 @@ import static com.Acrobot.ChestShop.Signs.ChestShopSign.AUTOFILL_CODE;
  */
 public class ItemChecker implements Listener {
 
+    public static final Component AUTO_FILL = Component.text().append(Component.text(ChestShopSign.AUTOFILL_CODE).decorate(TextDecoration.BOLD)).build();
+
     @EventHandler(priority = EventPriority.LOWEST)
     public static void onPreShopCreation(PreShopCreationEvent event) {
-        String itemCode = event.getSignLine(ITEM_LINE);
+        String itemCode = event.getSignLineRaw(ITEM_LINE);
 
         ItemParseEvent parseEvent = new ItemParseEvent(itemCode);
         Bukkit.getPluginManager().callEvent(parseEvent);
@@ -50,7 +55,7 @@ public class ItemChecker implements Listener {
                 }
 
                 if (item == null) {
-                    event.setSignLine(ITEM_LINE, ChatColor.BOLD + ChestShopSign.AUTOFILL_CODE);
+                    event.setSignLine(ITEM_LINE, AUTO_FILL);
                     event.setOutcome(ITEM_AUTOFILL);
                     return;
                 }
@@ -67,7 +72,7 @@ public class ItemChecker implements Listener {
             return;
         }
 
-        event.setSignLine(ITEM_LINE, itemCode);
+        event.setSignLine(ITEM_LINE, Component.text(itemCode));
     }
 
     private static boolean isSameItem(String newCode, ItemStack item) {

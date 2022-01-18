@@ -1,13 +1,17 @@
 package com.Acrobot.ChestShop.Events;
 
-import me.justeli.survival.companies.storage.Company;
+import net.kyori.adventure.text.Component;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.block.SignChangeEvent;
+import rocks.survival.minecraft.network.server.survival.companies.storage.Company;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * Represents a state before shop is created
@@ -21,12 +25,12 @@ public class PreShopCreationEvent extends Event implements Cancellable {
     private Company company;
     private CreationOutcome outcome = CreationOutcome.SHOP_CREATED_SUCCESSFULLY;
     private Sign sign;
-    private String[] signLines;
+    private SignChangeEvent event;
 
-    public PreShopCreationEvent(Player creator, Sign sign, String[] signLines) {
+    public PreShopCreationEvent(Player creator, Sign sign, SignChangeEvent event) {
         this.creator = creator;
         this.sign = sign;
-        this.signLines = signLines.clone();
+        this.event = event;
     }
 
     /**
@@ -94,8 +98,11 @@ public class PreShopCreationEvent extends Event implements Cancellable {
      *
      * @param signLines Text to set
      */
-    public void setSignLines(String[] signLines) {
-        this.signLines = signLines;
+    public void setSignLines(List<Component> signLines) {
+        for (int i = 0; i < 4; i++)
+        {
+            this.event.line(i, signLines.get(i));
+        }
     }
 
     /**
@@ -104,8 +111,8 @@ public class PreShopCreationEvent extends Event implements Cancellable {
      * @param line Line number to set (0-3)
      * @param text Text to set
      */
-    public void setSignLine(byte line, String text) {
-        this.signLines[line] = text;
+    public void setSignLine(int line, Component text) {
+        this.event.line(line, text);
     }
 
     /**
@@ -132,8 +139,12 @@ public class PreShopCreationEvent extends Event implements Cancellable {
      * @param line Line number (0-3)
      * @return Text on the sign
      */
-    public String getSignLine(byte line) {
-        return signLines[line];
+    public Component getSignLine(int line) {
+        return event.line(line);
+    }
+
+    public String getSignLineRaw(int line) {
+        return ChatColor.stripColor(event.getLine(line));
     }
 
     /**
@@ -141,8 +152,8 @@ public class PreShopCreationEvent extends Event implements Cancellable {
      *
      * @return Text on the sign
      */
-    public String[] getSignLines() {
-        return signLines;
+    public List<Component> getSignLines() {
+        return event.lines();
     }
 
     /**

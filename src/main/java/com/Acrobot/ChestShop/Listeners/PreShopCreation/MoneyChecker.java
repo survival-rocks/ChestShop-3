@@ -29,7 +29,7 @@ public class MoneyChecker implements Listener {
             return;
         }
 
-        if (ChestShopSign.isAdminShop(event.getSignLine(NAME_LINE))) {
+        if (ChestShopSign.isAdminShop(event.getSignLineRaw(NAME_LINE))) {
             return;
         }
 

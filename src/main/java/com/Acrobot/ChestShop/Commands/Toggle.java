@@ -1,7 +1,6 @@
 package com.Acrobot.ChestShop.Commands;
 
 import com.Acrobot.ChestShop.Configuration.Messages;
-import me.justeli.survival.companies.storage.Company;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -9,6 +8,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import rocks.survival.minecraft.network.server.survival.companies.storage.Company;
 
 import java.util.HashSet;
 import java.util.Set;

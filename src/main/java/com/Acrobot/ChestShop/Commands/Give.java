@@ -6,14 +6,13 @@ import com.Acrobot.Breeze.Utils.NumberUtil;
 import com.Acrobot.ChestShop.Configuration.Messages;
 import com.Acrobot.ChestShop.Events.ItemParseEvent;
 import me.justeli.chestshop.FormatMessage;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import rocks.survival.minecraft.network.utils.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,8 +76,8 @@ public class Give implements CommandExecutor {
         if (!(sender instanceof Player))
             return true;
 
-        TextComponent message = FormatMessage.transaction(Messages.prefix(Messages.ITEM_GIVEN.replace("%player", receiver.getName())), item);
-        sender.spigot().sendMessage(message);
+        Text message = FormatMessage.transaction(Messages.prefix(Messages.ITEM_GIVEN.replace("%player", receiver.getName())), item);
+        message.chat(sender);
 
         return true;
     }

@@ -1,10 +1,9 @@
 package com.Acrobot.ChestShop.Events.Economy;
 
-import me.justeli.survival.companies.storage.Company;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import rocks.survival.minecraft.network.server.survival.companies.storage.Company;
 
 import java.math.BigDecimal;
 import java.util.UUID;

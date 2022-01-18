@@ -1,9 +1,5 @@
 package com.Acrobot.ChestShop.Events;
 
-import com.Acrobot.ChestShop.Database.Account;
-import me.justeli.survival.companies.storage.Company;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -11,6 +7,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import rocks.survival.minecraft.network.server.survival.companies.storage.Company;
 
 import java.math.BigDecimal;
 

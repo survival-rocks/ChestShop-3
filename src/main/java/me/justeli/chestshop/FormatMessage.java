@@ -1,8 +1,7 @@
 package me.justeli.chestshop;
 
-import me.justeli.api.wide.Text;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.inventory.ItemStack;
+import rocks.survival.minecraft.network.utils.Text;
 
 /**
  * Created by Eli on July 28, 2020.
@@ -10,17 +9,17 @@ import org.bukkit.inventory.ItemStack;
  */
 public class FormatMessage
 {
-    public static TextComponent transaction (String message, ItemStack item)
+    public static Text transaction (String message, ItemStack item)
     {
         String[] parts = message.split(" %item ");
 
         if (parts.length == 1)
-            return new TextComponent(message);
+            return new Text();
 
         Text text = new Text().colored(parts[0]);
         if (item.getAmount() != 1)
             text.number(item.getAmount());
 
-        return text.item(item).colored(parts[1]).toComponent();
+        return text.item(item).colored(parts[1]);
     }
 }
