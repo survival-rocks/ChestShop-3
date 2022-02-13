@@ -32,7 +32,7 @@ public class ChestShopSign {//
     public static final byte PRICE_LINE = 2;
     public static final byte ITEM_LINE = 3;
 
-    private static final Pattern SHORT_NAME_PATTERN = Pattern.compile("^[A-Za-z0-9 !$&',\\-.µÀ-ÖØ-öø-ž]{3,15}$");
+    private static final Pattern SHORT_NAME_PATTERN = Pattern.compile("^[A-Za-z0-9 !$&',\\-.µÀ-ÖØ-öø-žᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘ\uA7AFʀꜱᴛᴜᴠᴡʏᴢ]{3,15}$");
     private static final Pattern AMOUNT_PATTERN = Pattern.compile("^[1-9][0-9]{0,5}$");
     private static final Pattern CREATION_PRICE_PATTERN = Pattern.compile("(?i)^([\\dbs :]+)$");
     private static final Pattern ITEM_PATTERN = Pattern.compile("^(\\?|[\\w ?#:-])+$");

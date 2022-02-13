@@ -10,6 +10,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import rocks.survival.minecraft.network.server.survival.companies.storage.Company;
 import rocks.survival.minecraft.network.server.survival.companies.storage.ShareHolder;
+import rocks.survival.minecraft.utils.text.Format;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -113,7 +114,9 @@ public class NameChecker
         event.setCompany(company);
         LATEST_COMPANY_USED.put(player.getUniqueId(), company.getShortSignName());
 
-        Component component = Component.text().append(Component.text(company.getShortSignName()).color(TextColor.color(company.getColor()))).build();
+        String companyName = company.isRyksCompany()? Format.of(company.getShortSignName()).toSmallLetters().get() : company.getShortSignName();
+
+        Component component = Component.text().append(Component.text(companyName).color(TextColor.color(company.getColor()))).build();
         event.setSignLine(NAME_LINE, component);
     }
 }
