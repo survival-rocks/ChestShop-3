@@ -94,7 +94,11 @@ public class NameChecker
         else if (company == null)
         {
             company = ChestShop.survivalMain.company(name).orElse(null);
-            if (company == null && !name.equalsIgnoreCase(player.getName()))
+            if (company != null && company.isRyksCompany() && player.hasPermission("companies.rykscompany"))
+            {
+                // allowed, don't return
+            }
+            else if (company == null && !name.equalsIgnoreCase(player.getName()))
             {
                 event.setOutcome(UNKNOWN_COMPANY);
                 return;
