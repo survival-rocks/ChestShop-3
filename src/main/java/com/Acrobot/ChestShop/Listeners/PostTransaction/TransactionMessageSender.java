@@ -9,7 +9,7 @@ import com.Acrobot.ChestShop.Economy.Economy;
 import com.Acrobot.ChestShop.Events.TransactionEvent;
 import me.justeli.chestshop.DelayedMessage;
 import me.justeli.chestshop.DelayedNotificationEvent;
-import me.justeli.util.Convert;
+import me.justeli.utility.util.Convert;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
