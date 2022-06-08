@@ -118,7 +118,7 @@ public class NameChecker
         event.setCompany(company);
         LATEST_COMPANY_USED.put(player.getUniqueId(), company.getShortSignName());
 
-        String companyName = company.isRyksCompany()? Format.of(company.getShortSignName()).toSmallLetters().get() : company.getShortSignName();
+        String companyName = company.isRyksCompany()? Format.toSmallCaps(company.getShortSignName()) : company.getShortSignName();
 
         Component component = Component.text().append(Component.text(companyName).color(TextColor.color(company.getColor()))).build();
         event.setSignLine(NAME_LINE, component);
