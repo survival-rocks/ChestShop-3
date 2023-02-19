@@ -297,8 +297,8 @@
         </dependency>
 
         <dependency>
-            <groupId>rocks.survival.minecraft.network.utils</groupId>
-            <artifactId>network-utils</artifactId>
+            <groupId>rocks.survival.minecraft.network.util</groupId>
+            <artifactId>network-util</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>

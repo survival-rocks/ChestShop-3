@@ -12,7 +12,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import rocks.survival.minecraft.network.utils.Text;
+import rocks.survival.minecraft.network.util.Text;
 
 import java.util.ArrayList;
 import java.util.List;

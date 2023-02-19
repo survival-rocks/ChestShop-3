@@ -38,7 +38,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import rocks.survival.minecraft.network.server.survival.companies.storage.Company;
-import rocks.survival.minecraft.network.utils.Text;
+import rocks.survival.minecraft.network.util.Text;
 
 import java.math.BigDecimal;
 import java.math.MathContext;

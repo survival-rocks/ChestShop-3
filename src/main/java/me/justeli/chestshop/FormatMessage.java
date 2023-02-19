@@ -1,7 +1,7 @@
 package me.justeli.chestshop;
 
 import org.bukkit.inventory.ItemStack;
-import rocks.survival.minecraft.network.utils.Text;
+import rocks.survival.minecraft.network.util.Text;
 
 /**
  * Created by Eli on July 28, 2020.

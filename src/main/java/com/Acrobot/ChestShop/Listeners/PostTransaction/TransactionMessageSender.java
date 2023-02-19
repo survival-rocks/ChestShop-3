@@ -20,7 +20,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import rocks.survival.minecraft.network.server.survival.companies.storage.Company;
-import rocks.survival.minecraft.network.utils.Text;
+import rocks.survival.minecraft.network.util.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
