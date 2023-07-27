@@ -10,6 +10,7 @@ import com.Acrobot.ChestShop.Utils.uBlock;
 import org.bukkit.DyeColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.block.sign.Side;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -58,16 +59,18 @@ public class SignCreate implements Listener {
             return;
         }
 
-        sign.setGlowingText(true);
-        sign.setColor(DyeColor.GRAY);
+        // sign.setEditable(false);
+
+        sign.getSide(Side.FRONT).setColor(DyeColor.GRAY);
+        sign.getSide(Side.FRONT).setGlowingText(true);
         sign.update();
 
         ShopCreatedEvent postEvent = new ShopCreatedEvent(
-                preEvent.getPlayer(),
-                preEvent.getSign(),
-                uBlock.findConnectedContainer(preEvent.getSign()),
-                event,
-                preEvent.getCompany()
+            preEvent.getPlayer(),
+            preEvent.getSign(),
+            uBlock.findConnectedContainer(preEvent.getSign()),
+            event,
+            preEvent.getCompany()
         );
         ChestShop.callEvent(postEvent);
     }

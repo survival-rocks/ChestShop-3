@@ -6,14 +6,10 @@ import com.Acrobot.ChestShop.Commands.AccessToggle;
 import com.Acrobot.ChestShop.Configuration.Messages;
 import com.Acrobot.ChestShop.Configuration.Properties;
 import com.Acrobot.ChestShop.Containers.AdminInventory;
-import com.Acrobot.ChestShop.Database.Account;
-import com.Acrobot.ChestShop.Events.AccountQueryEvent;
-import com.Acrobot.ChestShop.Events.Economy.AccountCheckEvent;
 import com.Acrobot.ChestShop.Events.ItemParseEvent;
 import com.Acrobot.ChestShop.Events.PreTransactionEvent;
 import com.Acrobot.ChestShop.Events.TransactionEvent;
 import com.Acrobot.ChestShop.Listeners.PreShopCreation.ItemChecker;
-import com.Acrobot.ChestShop.Listeners.PreShopCreation.PriceChecker;
 import com.Acrobot.ChestShop.Permission;
 import com.Acrobot.ChestShop.Security;
 import com.Acrobot.ChestShop.Signs.ChestShopSign;
@@ -92,10 +88,20 @@ public class PlayerInteract implements Listener {
             return;
         }
 
+//        // prevent sign edits // code by Eli
+        if (!player.getInventory().getItemInMainHand().getType().name().contains("_DYE")
+                && player.getInventory().getItemInMainHand().getType() != Material.GLOW_INK_SAC
+                && action == RIGHT_CLICK_BLOCK)
+        {
+            event.setCancelled(true);
+        }
+//        // end code by Eli
+
         if (Properties.ALLOW_AUTO_ITEM_FILL && ItemChecker.AUTO_FILL.equals(sign.line(ITEM_LINE))) {
             if (ChestShopSign.hasPermission(player, OTHER_NAME_CREATE, sign)) {
                 ItemStack item = player.getInventory().getItemInMainHand();
                 if (!MaterialUtil.isEmpty(item)) {
+                    event.setCancelled(true); // from https://github.com/ChestShop-authors/ChestShop-3/commit/7203ec17cd20d8dc730a5e87ade927a4515652e9
                     String itemCode;
                     try {
                         itemCode = MaterialUtil.getSignName(item);
@@ -137,7 +143,6 @@ public class PlayerInteract implements Listener {
                                 continue;
                             sign.line(i, line);
                         }
-                        sign.update();
                     }
                     sign.update();
 
@@ -170,11 +175,13 @@ public class PlayerInteract implements Listener {
             }
         }
 
+        // start supposed to be commented out
         if (action == RIGHT_CLICK_BLOCK) {
             event.setCancelled(true);
         } else if (action == LEFT_CLICK_BLOCK && !ChestShopSign.canAccess(player, sign)) {
             event.setCancelled(true);
         }
+        // end supposed to be commented out
 
         if (Properties.CHECK_ACCESS_FOR_SHOP_USE && !Security.canAccess(player, block, true)) {
             player.sendMessage(Messages.prefix(Messages.TRADE_DENIED));
