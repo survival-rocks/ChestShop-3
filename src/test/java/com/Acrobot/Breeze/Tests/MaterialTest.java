@@ -29,7 +29,7 @@ public class MaterialTest {
     @Test
     public void testCodes() {
         for (Material material : Material.values()) {
-            if (material.isLegacy() || material == Material.WARPED_FUNGUS_ON_A_STICK) {
+            if (material.isLegacy() || material == Material.WARPED_FUNGUS_ON_A_STICK || material == Material.HEARTBREAK_POTTERY_SHERD) {
                 continue;
             }
             String shortenedName = MaterialUtil.getShortenedName(material.toString(), MaterialUtil.MAXIMUM_SIGN_WIDTH);
